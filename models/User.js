@@ -1,12 +1,18 @@
-// models/User.js
-const mongoose = require('mongoose');
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define("User", {
+    nom: { type: DataTypes.STRING, allowNull: false },
+    email: { type: DataTypes.STRING, allowNull: false, unique: true },
+    mot_de_passe: { type: DataTypes.STRING, allowNull: false },
+    role: {
+      type: DataTypes.ENUM('admin', 'technician', 'user'),
+      allowNull: false
+    }
+  });
 
-const UserSchema = new mongoose.Schema({
-    nom: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    mot_de_passe: { type: String, required: true },
-    role: { type: String, enum: ['Admin', 'Technicien', 'Personnel'], required: true },
-    date_inscription: { type: Date, default: Date.now }
-});
-
-module.exports = mongoose.model('User', UserSchema);
+  return User;
+};
+// The code above defines a User model with the following fields: nom, email, mot_de_passe, and role. The nom, email, mot_de_passe fields are required and the email field must be unique. The role field is an ENUM with the values Admin, Technicien, and Personnel. The model is then returned to be used in the application.

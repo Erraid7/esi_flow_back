@@ -1,33 +1,33 @@
-// server.js
-require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
+const { sequelize } = require('./models'); // Import Sequelize instance
+
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(express.json());
-app.use(cors()); // Allow cross-origin requests
 
-// Database connection
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error(err));
+// Modify your sync code in server.js
+sequelize.sync({ force: true }) // Use force: true for initial setup
+  .then(() => console.log("✅ Database synced successfully"))
+  .catch(err => console.error("❌ Database sync failed:", err));
 
-// Sample route
-app.get('/', (req, res) => {
-    res.send('Welcome to the Maintenance Backend API');
-});
+// Routes
+const userRoutes = require('./routes/users');
+const equipmentRoutes = require('./routes/equipment');
+const interventionRoutes = require('./routes/interventions');
 
-// Import routes (example)
-// const userRoutes = require('./routes/users');
-// app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/equipment', equipmentRoutes);
+app.use('/api/interventions', interventionRoutes);
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// Only listen when running as main script
+if (require.main === module) {
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  }
+
+module.exports = app;
+// The code above imports the Sequelize instance from models/index.js and uses it to sync the database. The application then sets up routes for users, equipment, and interventions using the respective route files. Finally, the application listens on the specified port and logs a message to the console when the server is running.

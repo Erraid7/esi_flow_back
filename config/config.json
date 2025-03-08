@@ -1,0 +1,9 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "221105",
+    "database": "esi_flow_db",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}
