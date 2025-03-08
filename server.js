@@ -8,11 +8,6 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 
-// Modify your sync code in server.js
-sequelize.sync({ force: true }) // Use force: true for initial setup
-  .then(() => console.log("✅ Database synced successfully"))
-  .catch(err => console.error("❌ Database sync failed:", err));
-
 // Routes
 const userRoutes = require('./routes/users');
 const equipmentRoutes = require('./routes/equipment');

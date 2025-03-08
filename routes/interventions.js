@@ -37,4 +37,19 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// 🔹 Delete an intervention
+router.delete('/:id', async (req, res) => {
+  try {
+    const intervention = await Intervention.findByPk(req.params.id);
+    if (!intervention) return res.status(404).json({ error: "Intervention not found" });
+
+    await intervention.destroy();
+    res.json({ message: "Intervention deleted successfully" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+
+
 module.exports = router;
