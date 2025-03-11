@@ -5,27 +5,18 @@ const bcrypt = require("bcryptjs");
 const { User } = require("../../models");
 require("dotenv").config();
 
-const SECRET_KEY = process.env.JWT_SECRET || "your_secret_key";
-
-// Generate JWT Token
-// const generateToken = (user) => {
-//     return jwt.sign(
-//         { id: user.id, role: user.role },
-//         SECRET_KEY,
-//         { expiresIn: "2h" }
-//     );
-// };
+const SECRET_KEY = process.env.JWT_SECRET || "cook123";
 
 // Register Route (For All Users)
 router.get("/register", async (req, res) => {
     res.send("Register Page");
-});
+}); 
 
 // Admin-Only: Create User (Technician/Simple User)
 router.post("/register", async (req, res) => {
-  const { nom, email, mot_de_passe, role } = req.body;
+  const { nom, email, mot_de_passe, phone, bio, role } = req.body;
 
-  if (!nom || !email || !mot_de_passe || !role) {
+  if (!nom || !email || !mot_de_passe || !phone || !bio ||!role) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -42,6 +33,8 @@ router.post("/register", async (req, res) => {
       nom,
       email,
       mot_de_passe: hashedPassword,
+      phone,
+      bio,
       role,
     });
     res
@@ -59,21 +52,21 @@ router.get("/login", async (req, res) => {
 
 // 🔹 Login Route
 router.post("/login", async (req, res) => {
-  const { email, mot_de_passe } = req.body;
+  const { email, phone, mot_de_passe } = req.body;
 
-  if (!email || !mot_de_passe) {
-    return res.status(400).json({ message: "Email and password are required" });
+  if ((!email && !phone) || !mot_de_passe) {
+    return res.status(400).json({ message: "Email or phone and password are required" });
   }
 
   try {
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { [email ? 'email' : 'phone']: email || phone } });
     if (!user) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json({ message: "Invalid email/phone or password" });
     }
 
     const isMatch = await bcrypt.compare(mot_de_passe, user.mot_de_passe);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json({ message: "Invalid email/phone or password" });
     }
 
     // Generate JWT
@@ -93,22 +86,32 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
 // 🔹 Logout Route (Clears the JWT Cookie)
 router.post("/logout", (req, res) => {
   res.cookie("jwt", "", { maxAge: 1 }); // Expire cookie immediately
   res.status(200).json({ message: "Logged out successfully" });
 });
+ //route for modidy password
+router.put("/modify-password", async (req, res) => {
+  const { email, phone, mot_de_passe } = req.body;
 
+  if ((!email && !phone) || !mot_de_passe) {
+    return res.status(400).json({ message: "Email or phone and password are required" });
+  }
 
+  try {
+    const user = await User.findOne({ where: { [email ? 'email' : 'phone']: email || phone } });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email/phone or password" });
+    }
 
-// Protected Route Example
-router.get("/protected", (req, res) => {
-  res.send("pritected page");
-});
+    const hashedPassword = await bcrypt.hash(mot_de_passe, 10);
+    await user.update({ mot_de_passe: hashedPassword });
+    res.status(200).json({ message: "Password modified successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }});
 
-// Admin-Only Route Example
-router.get("/admin", (req, res) => {
-  res.send("Admin Page");
-});
 
 module.exports = router;

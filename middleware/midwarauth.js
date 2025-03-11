@@ -34,4 +34,14 @@ const checkUser = (req, res, next) => {
   next();
 };
 
-module.exports = { requireAuth, checkUser };
+// Middleware to check if the user has the required role
+const requireRole = (roles) => {
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({ message: "Access denied. Insufficient permissions." });
+    }
+    next();
+  };
+};
+
+module.exports = { requireAuth, checkUser, requireRole };

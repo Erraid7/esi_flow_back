@@ -1,9 +1,11 @@
 const express = require('express');
 const { User } = require('../models');
+const { requireAuth, checkUser,requireRole} = require("../middleware/midwarauth");
 const router = express.Router();
 
+
 // 🔹 Get all users
-router.get('/', async (req, res) => {
+router.get('/', requireAuth, requireRole(["admin"]),async (req, res) => {
   try {
     const users = await User.findAll();
     res.json(users);
@@ -12,18 +14,9 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 🔹 Create a new user
-router.post('/', async (req, res) => {
-  try {
-    const user = await User.create(req.body); 
-    res.status(201).json(user);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
 
 // 🔹 Update user details
-router.put('/:id', async (req, res) => {
+router.put('/:id',requireAuth, async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -36,7 +29,7 @@ router.put('/:id', async (req, res) => {
 });
  
 // 🔹 Delete a user
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireAuth, requireRole(["admin"]) ,  async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -47,5 +40,7 @@ router.delete('/:id', async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
+
+
 
 module.exports = router;
