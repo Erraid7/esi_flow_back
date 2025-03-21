@@ -1,15 +1,19 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  const Equipment = sequelize.define("Equipment", {
-    nom: { type: DataTypes.STRING, allowNull: false },
-    type: { type: DataTypes.STRING, allowNull: false },
-    localisation: { type: DataTypes.STRING, allowNull: false },
-    etat: { type: DataTypes.ENUM("Fonctionnel", "En panne", "En maintenance"), allowNull: false, defaultValue: "Fonctionnel" },
+  const Equipment = sequelize.define("equipment", {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    type: { type: DataTypes.ENUM("computer", "printer", "network_device", "other"), allowNull: false },
+    category: { type: DataTypes.ENUM("hardware", "software", "furniture", "other"), allowNull: false },
+    acquisition_date: { type: DataTypes.DATE },
+    date_of_commissioning: { type: DataTypes.DATE },
+    localisation: { type: DataTypes.STRING },
+    eqp_status: { type: DataTypes.ENUM("working", "needs_maintenance", "out_of_service"), allowNull: false },
+    documentation: { type: DataTypes.TEXT },
+    maintenance_history: { type: DataTypes.ARRAY(DataTypes.INTEGER) }, // Array of intervention IDs
   });
+
+  Equipment.associate = (models) => {
+    Equipment.hasMany(models.request, { foreignKey: "equipment_id" });
+  };
 
   return Equipment;
 };
-// The code above defines an Equipment model with the following fields: nom, type, localisation, and etat. The nom, type, localisation fields are required. The etat field is an ENUM with the values Fonctionnel, En panne, and En maintenance. The etat field has a default value of Fonctionnel. The model is then returned to be used in the application.

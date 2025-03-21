@@ -11,12 +11,15 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@prisma/client": "^6.5.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "pg": "^8.13.3",
+    "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.6"
+    "prisma": "^6.5.0",
+    "sequelize": "^6.37.6",
+    "sequelize-cli": "^6.6.2"
   },
   "devDependencies": {
     "jest": "^29.7.0",
