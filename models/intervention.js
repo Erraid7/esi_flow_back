@@ -10,7 +10,15 @@ module.exports = (sequelize, DataTypes) => {
     updated_at: { type: DataTypes.DATE },
     request_id: { type: DataTypes.INTEGER, allowNull: false },
     intervention_type: { type: DataTypes.ENUM("repair", "maintenance", "replacement"), allowNull: false },
-  });
+  },
+  {
+    underscored: true,
+    timestamps: true,
+    createdAt: "date_creation",
+    updatedAt: "updated_at",
+  }
+
+);
 
   Intervention.associate = (models) => {
     Intervention.belongsTo(models.user, { foreignKey: "technician_id" });

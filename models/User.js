@@ -8,7 +8,15 @@ module.exports = (sequelize, DataTypes) => {
     phone: { type: DataTypes.STRING },
     bio: { type: DataTypes.TEXT },
     profession: { type: DataTypes.ENUM("teacher", "staff", "other"), allowNull: false }, // Adjust values based on school roles
-  });
+  },
+  {
+    underscored: true,
+    timestamps: true,
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+  }
+
+);
 
   User.associate = (models) => {
     User.hasMany(models.request, { foreignKey: "requester_id" });

@@ -9,8 +9,17 @@ module.exports = (sequelize, DataTypes) => {
     priority: { type: DataTypes.ENUM("low", "medium", "high"), allowNull: false },
     req_status: { type: DataTypes.ENUM("To Do", "In Progress", "Pending", "Completed"), allowNull: false },
     created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-    picture: { type: DataTypes.TEXT },
-  });
+    updated_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+    picture: { type: DataTypes.TEXT, allowNull: true },
+  },
+  {
+    underscored: true,
+    timestamps: true,
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+  }
+
+);
 
   Request.associate = (models) => {
     Request.belongsTo(models.user, { foreignKey: "requester_id" });

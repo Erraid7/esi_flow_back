@@ -9,7 +9,14 @@ module.exports = (sequelize, DataTypes) => {
     delivery_method: { type: DataTypes.ENUM("email", "sms", "app_notification"), allowNull: false },
     seen: { type: DataTypes.BOOLEAN, defaultValue: false },
     created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-  });
+  },
+  {
+    underscored: true,
+    timestamps: true,
+    createdAt: "created_at"
+  }
+
+);
 
   Notification.associate = (models) => {
     Notification.belongsTo(models.user, { foreignKey: "recipient_id" });

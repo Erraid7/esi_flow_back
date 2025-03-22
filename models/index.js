@@ -1,18 +1,33 @@
-require('dotenv').config();
-const { Sequelize } = require('sequelize');
-
-const config = require('../config/config.json').development;
+const { Sequelize, DataTypes } = require("sequelize");
+require("dotenv").config();
 
 const sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
   {
-    host: config.host,
-    port: config.port,
-    dialect: config.dialect,
-    logging: false, // Disable logging SQL queries (optional)
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
+    logging: false,
   }
 );
 
-module.exports = sequelize;
+const db = {};
+db.Sequelize = Sequelize;
+db.sequelize = sequelize;
+
+// Import models
+db.user = require("./user")(sequelize, DataTypes);
+db.request = require("./request")(sequelize, DataTypes);
+db.equipment = require("./equipment")(sequelize, DataTypes);
+db.notification = require("./notification")(sequelize, DataTypes);
+db.intervention = require("./intervention")(sequelize, DataTypes);
+
+// Model relationships (associations)
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
+module.exports = db;

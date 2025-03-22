@@ -1,41 +1,10 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const { user } = require("../models");
 
-// Register User
-exports.registerUser = async (req, res) => {
+// Create a New User
+exports.createUser = async (req, res) => {
   try {
-    const { full_name, email, password, role } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await user.create({ full_name, email, password: hashedPassword, role });
-    res.status(201).json({ message: "User registered successfully", user: newUser });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-// Login User
-exports.loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const existingUser = await user.findOne({ where: { email } });
-
-    if (!existingUser || !(await bcrypt.compare(password, existingUser.password))) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-
-    const token = jwt.sign({ id: existingUser.id, role: existingUser.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    res.json({ message: "Login successful", token });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-// Get User Profile
-exports.getUserProfile = async (req, res) => {
-  try {
-    const userData = await user.findByPk(req.user.id, { attributes: { exclude: ["password"] } });
-    res.json(userData);
+    const newUser = await user.create(req.body);
+    res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -44,8 +13,38 @@ exports.getUserProfile = async (req, res) => {
 // Get All Users
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await user.findAll({ attributes: { exclude: ["password"] } });
+    const users = await user.findAll();
     res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get User by ID
+exports.getUserById = async (req, res) => {
+  try {
+    const userData = await user.findByPk(req.params.id);
+    userData ? res.json(userData) : res.status(404).json({ message: "User not found" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Update User
+exports.updateUser = async (req, res) => {
+  try {
+    const updated = await user.update(req.body, { where: { id: req.params.id } });
+    updated[0] ? res.json({ message: "User updated" }) : res.status(404).json({ message: "User not found" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Delete User
+exports.deleteUser = async (req, res) => {
+  try {
+    const deleted = await user.destroy({ where: { id: req.params.id } });
+    deleted ? res.json({ message: "User deleted" }) : res.status(404).json({ message: "User not found" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -8,8 +8,15 @@ module.exports = (sequelize, DataTypes) => {
     localisation: { type: DataTypes.STRING },
     eqp_status: { type: DataTypes.ENUM("working", "needs_maintenance", "out_of_service"), allowNull: false },
     documentation: { type: DataTypes.TEXT },
-    maintenance_history: { type: DataTypes.ARRAY(DataTypes.INTEGER) }, // Array of intervention IDs
-  });
+    maintenance_history: { type: DataTypes.ARRAY(DataTypes.INTEGER) }, // ✅ Array of intervention IDs
+  },
+  {
+    underscored: true,
+    tableName: "equipments", // This will define the table name explicitly
+    timestamps: true,
+  }
+
+);
 
   Equipment.associate = (models) => {
     Equipment.hasMany(models.request, { foreignKey: "equipment_id" });
