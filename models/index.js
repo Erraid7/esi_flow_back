@@ -1,27 +1,33 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { Sequelize, DataTypes } = require("sequelize");
+require("dotenv").config();
 
-const User = require('./user')(sequelize, DataTypes);
-const Equipment = require('./equipment')(sequelize, DataTypes);
-const Intervention = require('./intervention')(sequelize, DataTypes);
-const Notification = require('./notification')(sequelize, DataTypes);
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
+    logging: false,
+  }
+);
 
-// 🔹 One-to-Many: A User (Technician) can have multiple Interventions
-User.hasMany(Intervention, { foreignKey: 'technicienId', onDelete: 'CASCADE' });
-Intervention.belongsTo(User, { foreignKey: 'technicienId' });
+const db = {};
+db.Sequelize = Sequelize;
+db.sequelize = sequelize;
 
-// 🔹 One-to-Many: An Equipment can have multiple Interventions
-Equipment.hasMany(Intervention, { foreignKey: 'equipementId', onDelete: 'CASCADE' });
-Intervention.belongsTo(Equipment, { foreignKey: 'equipementId' });
+// Import models
+db.user = require("./user")(sequelize, DataTypes);
+db.request = require("./request")(sequelize, DataTypes);
+db.equipment = require("./equipment")(sequelize, DataTypes);
+db.notification = require("./notification")(sequelize, DataTypes);
+db.intervention = require("./intervention")(sequelize, DataTypes);
 
-// 🔹 One-to-Many: A User (Any) can receive multiple Notifications
-User.hasMany(Notification, { foreignKey: 'utilisateurId', onDelete: 'CASCADE' });
-Notification.belongsTo(User, { foreignKey: 'utilisateurId' });
+// Model relationships (associations)
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
 
-module.exports = {
-  sequelize,
-  User,
-  Equipment,
-  Intervention,
-  Notification
-};
+module.exports = db;
