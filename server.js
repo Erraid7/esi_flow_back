@@ -1,8 +1,13 @@
 require("dotenv").config();
 const express = require("express");
+const cookieParser = require("cookie-parser");
+const {checkUser}= require('./middlewares/authmiddlware');
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
+
+app.use(checkUser); 
 
 // Import and use routes
 app.use("/users", require("./routes/userRoutes"));

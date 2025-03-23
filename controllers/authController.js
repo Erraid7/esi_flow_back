@@ -2,6 +2,8 @@ const { user } = require("../models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { requireAuth, requireRole } = require("../middlewares/authmiddlware");
+
+
 const registerPage = (req, res) => {
     res.send("Register Page");
 };

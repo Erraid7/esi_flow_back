@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken"); // Ensure this line is present
 require("dotenv").config();
 
 const requireAuth = (req, res, next) => {
@@ -16,7 +16,7 @@ const requireAuth = (req, res, next) => {
     res.status(403).json({ message: "Invalid token" });
   }
 };
-
+ 
 const checkUser = (req, res, next) => {
   const token = req.cookies.jwt;
 
