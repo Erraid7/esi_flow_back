@@ -2,8 +2,17 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("equipments", {
       id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-      type: { type: Sequelize.ENUM("computer", "printer", "network_device", "other"), allowNull: false },
-      category: { type: Sequelize.ENUM("hardware", "software", "furniture", "other"), allowNull: false },
+      type: { type: Sequelize.ENUM(
+        "Lightweight", "Heavyweight", "Motorcycle", "Desktop", "Laptop", "Server", 
+        "Router", "Switch", "Firewall", "Projector", "Printer", "Scanner", 
+        "Oscilloscope", "3D Printer", "Desk", "Chair", "Window", "Door", 
+        "Electromenager", "Heating", "Radiator", "Air Conditioner", "Other"
+      ), allowNull: false },
+      category: { type: Sequelize.ENUM(
+        "Vehicle", "Computing Device", "Networking Equipment", "Storage Device", 
+        "Multimedia Equipment", "Office Equipment", "Laboratory Equipment", 
+        "Furniture", "Building Component", "Appliance", "HVAC", "Other"
+      ), allowNull: false },
       acquisition_date: { type: Sequelize.DATE },
       date_of_commissioning: { type: Sequelize.DATE },
       localisation: { type: Sequelize.STRING },

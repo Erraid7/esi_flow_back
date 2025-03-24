@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     report: { type: DataTypes.TEXT, allowNull: false },
     technician_id: { type: DataTypes.INTEGER, allowNull: false },
-    intv_status: { type: DataTypes.ENUM("planned", "in_progress", "completed", "cancelled"), allowNull: false },
+    intv_status: { type: DataTypes.ENUM("To Do", "In Progress", "Pendding", "completed", "cancelled"), allowNull: false },
     deadline: { type: DataTypes.DATE },
     date_creation: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     date_cloture: { type: DataTypes.DATE },
@@ -21,8 +21,8 @@ module.exports = (sequelize, DataTypes) => {
 );
 
   Intervention.associate = (models) => {
-    Intervention.belongsTo(models.user, { foreignKey: "technician_id" });
-    Intervention.belongsTo(models.request, { foreignKey: "request_id" });
+    Intervention.belongsTo(models.user, { foreignKey: "technician_id", as: "technician" });
+    Intervention.belongsTo(models.request, { foreignKey: "request_id", as: "request" });
   };
 
   return Intervention;

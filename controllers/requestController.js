@@ -1,4 +1,4 @@
-const { request } = require("../models");
+const { request, user, equipment } = require("../models");
 
 // Create a Request
 exports.createRequest = async (req, res) => {
@@ -13,7 +13,21 @@ exports.createRequest = async (req, res) => {
 // Get All Requests
 exports.getAllRequests = async (req, res) => {
   try {
-    const requests = await request.findAll();
+    const requests = await request.findAll({
+      include: [
+        {
+          model: user,
+          as: "requester", // Alias must match the model association
+          attributes: ["id", "full_name", "email", "role"]
+        },
+        {
+          model: equipment,
+          as: "equipment",
+          attributes: ["id", "type", "category", "localisation"]
+        }
+      ]
+    });
+
     res.json(requests);
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -18,7 +18,7 @@ module.exports = {
       },
       priority: { type: Sequelize.ENUM("low", "medium", "high"), allowNull: false },
       picture: { type: Sequelize.TEXT, allowNull: true },
-      req_status: { type: Sequelize.ENUM("To Do", "In Progress", "Pending", "Completed"), allowNull: false },
+      req_status: { type: Sequelize.BOOLEAN, defaultValue: false },
       created_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
       updated_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW }
     });

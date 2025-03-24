@@ -9,7 +9,7 @@ module.exports = {
         references: { model: "users", key: "id" }, 
         onDelete: "CASCADE" 
       },
-      intv_status: { type: Sequelize.ENUM("planned", "in_progress", "completed", "cancelled"), allowNull: false },
+      intv_status: { type: Sequelize.ENUM("To Do", "In Progress", "Pendding", "completed", "cancelled"), allowNull: false },
       deadline: { type: Sequelize.DATE },
       date_creation: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
       date_cloture: { type: Sequelize.DATE },
