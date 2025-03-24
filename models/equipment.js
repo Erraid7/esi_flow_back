@@ -1,8 +1,23 @@
 module.exports = (sequelize, DataTypes) => {
   const Equipment = sequelize.define("equipment", {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    type: { type: DataTypes.ENUM("computer", "printer", "network_device", "other"), allowNull: false },
-    category: { type: DataTypes.ENUM("hardware", "software", "furniture", "other"), allowNull: false },
+    type: { 
+      type: DataTypes.ENUM(
+        "Lightweight", "Heavyweight", "Motorcycle", "Desktop", "Laptop", "Server", 
+        "Router", "Switch", "Firewall", "Projector", "Printer", "Scanner", 
+        "Oscilloscope", "3D Printer", "Desk", "Chair", "Window", "Door", 
+        "Electromenager", "Heating", "Radiator", "Air Conditioner", "Other"
+      ), 
+      allowNull: false 
+    },
+    category: { 
+      type: DataTypes.ENUM(
+        "Vehicle", "Computing Device", "Networking Equipment", "Storage Device", 
+        "Multimedia Equipment", "Office Equipment", "Laboratory Equipment", 
+        "Furniture", "Building Component", "Appliance", "HVAC", "Other"
+      ), 
+      allowNull: false 
+    },
     acquisition_date: { type: DataTypes.DATE },
     date_of_commissioning: { type: DataTypes.DATE },
     localisation: { type: DataTypes.STRING },

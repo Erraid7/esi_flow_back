@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     localisation: { type: DataTypes.STRING },
     equipment_id: { type: DataTypes.INTEGER },
     priority: { type: DataTypes.ENUM("low", "medium", "high"), allowNull: false },
-    req_status: { type: DataTypes.ENUM("To Do", "In Progress", "Pending", "Completed"), allowNull: false },
+    req_status: { type: DataTypes.BOOLEAN, defaultValue: false },
     created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     updated_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     picture: { type: DataTypes.TEXT, allowNull: true },
@@ -22,8 +22,8 @@ module.exports = (sequelize, DataTypes) => {
 );
 
   Request.associate = (models) => {
-    Request.belongsTo(models.user, { foreignKey: "requester_id" });
-    Request.belongsTo(models.equipment, { foreignKey: "equipment_id" });
+    Request.belongsTo(models.user, { foreignKey: "requester_id", as: "requester" });
+    Request.belongsTo(models.equipment, { foreignKey: "equipment_id", as: "equipment" });
     Request.hasMany(models.intervention, { foreignKey: "request_id" });
   };
 

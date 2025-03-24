@@ -19,9 +19,9 @@ module.exports = (sequelize, DataTypes) => {
 );
 
   Notification.associate = (models) => {
-    Notification.belongsTo(models.user, { foreignKey: "recipient_id" });
-    Notification.belongsTo(models.request, { foreignKey: "request_id" });
-    Notification.belongsTo(models.intervention, { foreignKey: "intervention_id" });
+    Notification.belongsTo(models.user, { foreignKey: "recipient_id", as: "recipient" });
+    Notification.belongsTo(models.request, { foreignKey: "request_id", as: "request" });
+    Notification.belongsTo(models.intervention, { foreignKey: "intervention_id", as: "intervention" });
   };
 
   return Notification;
