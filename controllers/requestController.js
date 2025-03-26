@@ -1,4 +1,8 @@
 const { request, user, equipment } = require("../models");
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinaryConfig = require('../config/cloudinary');
 
 // Create a Request
 exports.createRequest = async (req, res) => {
@@ -61,5 +65,22 @@ exports.deleteRequest = async (req, res) => {
     deleted ? res.json({ message: "Request deleted" }) : res.status(404).json({ message: "Request not found" });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+exports.uploadImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const imageUrl = req.file.path; // Cloudinary returns the image URL
+
+    res.json({ message: "Image uploaded successfully", imageUrl });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Image upload failed" });
   }
 };

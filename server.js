@@ -16,7 +16,7 @@ app.use("/equipments", require("./routes/equipmentRoutes"));
 app.use("/interventions", require("./routes/interventionRoutes"));
 app.use("/notifications", require("./routes/notificationRoutes"));
 app.use('/auth', require('./routes/authRoutes'));
-app.get('/', (req, res) => {
+app.get('/', (req, res) => { 
     res.send('Welcome to my project');
 });
 
