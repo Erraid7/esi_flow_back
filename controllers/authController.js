@@ -101,6 +101,8 @@ const modifyPassword = async (req, res) => {
     }
 };
 
+
+
 module.exports = {
     registerPage,
     registerUser,

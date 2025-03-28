@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea, select, button {
+            margin-bottom: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #loading {
+            display: none;
+            color: #007BFF;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Submit a Request</h1>
+        <form id="requestForm">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title">
+            <p class="error-message" id="titleError"></p>
+
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4"></textarea>
+            <p class="error-message" id="descriptionError"></p>
+
+            <label for="localisation">Localisation</label>
+            <input type="text" id="localisation" name="localisation">
+            <p class="error-message" id="localisationError"></p>
+
+            <label for="equipment_id">Equipment ID</label>
+            <input type="text" id="equipment_id" name="equipment_id">
+            <p class="error-message" id="equipmentError"></p>
+
+            <label for="priority">Priority</label>
+            <select id="priority" name="priority">
+                <option value="">--Select Priority--</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+            <p class="error-message" id="priorityError"></p>
+
+            <label for="picture">Picture</label>
+            <input type="file" id="picture" name="image" accept="image/*">
+            <p class="error-message" id="pictureError"></p>
+
+            <button type="submit">Submit Request</button>
+        </form>
+        <p id="loading">Submitting your request...</p>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        document.getElementById("requestForm").addEventListener("submit", async function (event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            let message = document.getElementById("message");
+            let loading = document.getElementById("loading");
+
+            // Clear previous error messages
+            document.querySelectorAll(".error-message").forEach(el => el.innerText = "");
+
+            let title = document.getElementById("title").value.trim();
+            let description = document.getElementById("description").value.trim();
+            let localisation = document.getElementById("localisation").value.trim();
+            let equipment_id = document.getElementById("equipment_id").value.trim();
+            let priority = document.getElementById("priority").value;
+            let imageFile = document.getElementById("picture").files[0];
+
+            try {
+                loading.style.display = "block"; // Show loading message
+
+                // Upload the image first
+                let uploadFormData = new FormData();
+                uploadFormData.append("image", imageFile);
+
+                let uploadResponse = await fetch("/requests/upload", {
+                    method: "POST",
+                    body: uploadFormData
+                });
+
+                let uploadResult = await uploadResponse.json();
+
+                if (!uploadResponse.ok) {
+                    document.getElementById("pictureError").innerText = uploadResult.message || "Image upload failed!";
+                    loading.style.display = "none";
+                    return;
+                }
+
+                let imageUrl = uploadResult.imageUrl; // Get uploaded image URL
+
+                // Now send the full request data with the image URL
+                let requestBody = {
+                    equipment_id,
+                    title,
+                    description,
+                    localisation,
+                    priority,
+                    picture: imageUrl
+                };
+
+                let response = await fetch("/requests", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(requestBody)
+                });
+
+                let result = await response.json();
+                loading.style.display = "none";
+
+                if (response.ok) {
+                    message.style.color = "green";
+                    message.innerText = "Request submitted successfully!";
+                    this.reset(); // Reset form fields after successful submission
+                } else {
+                    message.style.color = "red";
+
+                    // Show backend validation messages in the respective fields
+                    if (result.message.includes("Equipment ID")) {
+                        document.getElementById("equipmentError").innerText = result.message;
+                    }
+                    if (result.message.includes("Title")) {
+                        document.getElementById("titleError").innerText = result.message;
+                    }
+                    if (result.message.includes("Description")) {
+                        document.getElementById("descriptionError").innerText = result.message;
+                    }
+                    if (result.message.includes("Localisation")) {
+                        document.getElementById("localisationError").innerText = result.message;
+                    }
+                    if (result.message.includes("priority")) {
+                        document.getElementById("priorityError").innerText = result.message;
+                    }
+                    if (result.message.includes("Picture")) {
+                        document.getElementById("pictureError").innerText = result.message;
+                    }
+                }
+            } catch (error) {
+                loading.style.display = "none";
+                message.style.color = "red";
+                message.innerText = "Failed to send request.";
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+</html>

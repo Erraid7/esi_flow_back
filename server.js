@@ -3,6 +3,17 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const {checkUser}= require('./middlewares/authmiddlware');
 const app = express();
+const path = require("path");
+
+// Set EJS as the template engine
+app.set("view engine", "ejs");
+
+// Set the directory where EJS views are located
+app.set("views", path.join(__dirname, "views"));
+
+// Serve static files (CSS, images, etc.)
+app.use(express.static(path.join(__dirname, "public")));
+
 
 app.use(express.json());
 app.use(cookieParser());

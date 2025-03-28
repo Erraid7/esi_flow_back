@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Request Form</title>
+</head>
+<body>
+    <h1>Request Form</h1>
+    <form action="/submit-request" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+        <script>
+            document.querySelector('form').action = "/form";
+        </script>
+
+        <label for="request">Request:</label>
+        <textarea id="request" name="request" required></textarea><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
