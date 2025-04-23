@@ -20,53 +20,58 @@ const transporter = nodemailer.createTransport({
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const recipientEmail = "nr_benkradidja@esi.dz"; // Change to actual recipient
+    const recipientEmail = "m_abbas@esi.dz"; // Change to actual recipient
     const emailSubject = `🔧 New Intervention Request: ${title}`;
     
-    const emailBody = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; background: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
-        <h2 style="background: #007bff; color: white; padding: 15px; text-align: center; border-radius: 10px 10px 0 0; margin: -20px -20px 20px;">🚨 New Intervention Request</h2>
-        
-        <p style="font-size: 16px; color: #333;">A new intervention request has been submitted. Here are the details:</p>
-        
-        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-          <tr>
-            <td style="background: #007bff; color: white; padding: 10px; font-weight: bold; width: 30%;">📌 Title</td>
-            <td style="background: #f1f1f1; padding: 10px;">${title}</td>
-          </tr>
-          <tr>
-            <td style="background: #007bff; color: white; padding: 10px; font-weight: bold;">📝 Description</td>
-            <td style="background: #f1f1f1; padding: 10px;">${description}</td>
-          </tr>
-          <tr>
-            <td style="background: #007bff; color: white; padding: 10px; font-weight: bold;">📍 Localisation</td>
-            <td style="background: #f1f1f1; padding: 10px;">${localisation}</td>
-          </tr>
-          <tr>
-            <td style="background: #007bff; color: white; padding: 10px; font-weight: bold;">⚠ Priority</td>
-            <td style="background: #f1f1f1; padding: 10px;">${priority}</td>
-          </tr>
-          <tr>
-            <td style="background: #007bff; color: white; padding: 10px; font-weight: bold;">🔧 Equipment ID</td>
-            <td style="background: #f1f1f1; padding: 10px;">${equipment_id}</td>
-          </tr>
-          <tr>
-            <td style="background: #007bff; color: white; padding: 10px; font-weight: bold;">📷 Picture</td>
-            <td style="background: #f1f1f1; padding: 10px;">
-              <a href="${picture}" style="color: #007bff; text-decoration: none; font-weight: bold;">View Image</a>
-            </td>
-          </tr>
-        </table>
+    const emailBody = `<div style="font-family: 'Inter', Arial, sans-serif; max-width: 620px; margin: auto; background: #f9fafb; padding: 24px; border-radius: 12px; box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.06); border: 1px solid #e5e7eb;">
+  <h2 style="background: #4f46e5; color: white; padding: 18px 24px; text-align: center; border-radius: 12px 12px 0 0; margin: -24px -24px 24px; font-size: 20px;">
+    🚨 New Intervention Request
+  </h2>
 
-        <p style="text-align: center; margin-top: 20px;">
-          <a href="#" style="background: #28a745; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">🔍 View Request</a>
-        </p>
+  <p style="font-size: 16px; color: #111827; margin-bottom: 16px;">
+    A new intervention request has been submitted. Here are the details:
+  </p>
 
-        <p style="font-size: 14px; color: #777; text-align: center; margin-top: 20px;">
-          This is an automated notification. Please do not reply.
-        </p>
-      </div>
-    `;
+  <table style="width: 100%; border-collapse: separate; border-spacing: 0 12px;">
+    <tr>
+      <td style="background: #4f46e5; color: white; padding: 12px 16px; font-weight: 600; border-top-left-radius: 8px; border-bottom-left-radius: 8px;">📌 Title</td>
+      <td style="background: #eef2ff; padding: 12px 16px; border-top-right-radius: 8px; border-bottom-right-radius: 8px;">${title}</td>
+    </tr>
+    <tr>
+      <td style="background: #4f46e5; color: white; padding: 12px 16px; font-weight: 600; border-top-left-radius: 8px; border-bottom-left-radius: 8px;">📝 Description</td>
+      <td style="background: #eef2ff; padding: 12px 16px; border-top-right-radius: 8px; border-bottom-right-radius: 8px;">${description}</td>
+    </tr>
+    <tr>
+      <td style="background: #4f46e5; color: white; padding: 12px 16px; font-weight: 600; border-top-left-radius: 8px; border-bottom-left-radius: 8px;">📍 Localisation</td>
+      <td style="background: #eef2ff; padding: 12px 16px; border-top-right-radius: 8px; border-bottom-right-radius: 8px;">${localisation}</td>
+    </tr>
+    <tr>
+      <td style="background: #4f46e5; color: white; padding: 12px 16px; font-weight: 600; border-top-left-radius: 8px; border-bottom-left-radius: 8px;">⚠ Priority</td>
+      <td style="background: #eef2ff; padding: 12px 16px; border-top-right-radius: 8px; border-bottom-right-radius: 8px;">${priority}</td>
+    </tr>
+    <tr>
+      <td style="background: #4f46e5; color: white; padding: 12px 16px; font-weight: 600; border-top-left-radius: 8px; border-bottom-left-radius: 8px;">🔧 Equipment ID</td>
+      <td style="background: #eef2ff; padding: 12px 16px; border-top-right-radius: 8px; border-bottom-right-radius: 8px;">${equipment_id}</td>
+    </tr>
+    <tr>
+      <td style="background: #4f46e5; color: white; padding: 12px 16px; font-weight: 600; border-top-left-radius: 8px; border-bottom-left-radius: 8px;">📷 Picture</td>
+      <td style="background: #eef2ff; padding: 12px 16px; border-top-right-radius: 8px; border-bottom-right-radius: 8px;">
+        <a href="${picture}" style="color: #4f46e5; text-decoration: underline; font-weight: 600;">View Image</a>
+      </td>
+    </tr>
+  </table>
+
+  <div style="text-align: center; margin-top: 32px;">
+    <a href="#" style="background: #22c55e; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block;">
+      🔍 View Request
+    </a>
+  </div>
+
+  <p style="font-size: 14px; color: #6b7280; text-align: center; margin-top: 24px;">
+    This is an automated notification. Please do not reply.
+  </p>
+</div>
+`;
 
     await transporter.sendMail({
       from: `"Support Team" <${process.env.EMAIL_USER}>`,

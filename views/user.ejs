@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background: #f4f4f4;
+            padding: 20px;
+            height: 100vh;
+        }
+        .sidebar h2 {
+            text-align: center;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 10px;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: black;
+            display: block;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+        }
+        .stat-box {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background: #f4f4f4;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination button {
+            margin: 5px;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>ESI FLOW</h2>
+        <ul>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/tasks" class="active">My Tasks</a></li>
+            <li><a href="/notifications">Notifications</a></li>
+            <li><a href="/settings">Settings</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <h1>User Management</h1>
+        <div class="stats">
+            <div class="stat-box">
+                <h2>Total Users</h2>
+                <p>1,210</p>
+            </div>
+            <div class="stat-box">
+                <h2>Maintenance Team</h2>
+                <p>58</p>
+            </div>
+            <div class="stat-box">
+                <h2>Administrators</h2>
+                <p>8</p>
+            </div>
+        </div>
+        <input type="text" id="search" placeholder="Search users..." onkeyup="searchUsers()">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Profession</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="userTable">
+         
+                    <tr>
+                        <td>rami</td>
+                        <td>admin</td>
+                        <td>nr_bendifallah@esi.dz</td>
+                        <td>0559185770</td>
+                        <td>nahb nakhdem</td>
+                        <td>
+                            <a href="/edit-user/">Edit</a>
+                            <a href="/delete-user/" onclick="return confirm('Are you sure?')">Delete</a>
+                        </td>
+                    </tr>
+
+            </tbody>
+        </table>
+        <div class="pagination">
+            <button onclick="prevPage()">&lt;</button>
+            <span id="pageNumber">1</span>
+            <button onclick="nextPage()">&gt;</button>
+        </div>
+    </div>
+    <script>
+        
+        
+    </script>
+</body>
+</html>

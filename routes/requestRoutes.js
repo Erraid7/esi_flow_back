@@ -15,7 +15,7 @@ router.delete("/:id", requestController.deleteRequest);
 
 //for uploading imges
 router.post("/upload", upload.single("image"), requestController.uploadImage);
-
+ 
 
 module.exports = router;
 // Compare this snippet from routes/equipmentRoutes.js:

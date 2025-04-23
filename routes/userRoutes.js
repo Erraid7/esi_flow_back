@@ -5,10 +5,12 @@ const { user } = require('../models');
 const { requireAuth,requireRole} = require("../middlewares/authmiddlware");
 
 // User-related routes
-router.post("/" ,  requireAuth, requireRole(["admin"]) , userController.createUser);
-router.get("/" , requireAuth, requireRole(["admin"]) ,userController.getAllUsers);
-router.get("/:id", requireAuth, requireRole(["admin"]) ,userController.getUserById);
-router.put("/:id",  requireAuth, requireRole(["admin"]),userController.updateUser);
-router.delete("/:id",  requireAuth, requireRole(["admin"]) ,userController.deleteUser);
+router.post("/"  , userController.createUser);
+router.get("/" ,userController.getAllUsers);
+router.get("/:id",userController.getUserById);
+router.put("/:id",userController.updateUser);
+router.delete("/:id" ,userController.deleteUser);
+
 
 module.exports = router;
+ 

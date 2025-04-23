@@ -119,6 +119,7 @@
             let priority = document.getElementById("priority").value;
             let imageFile = document.getElementById("picture").files[0];
 
+
             try {
                 loading.style.display = "block"; // Show loading message
 
@@ -140,7 +141,7 @@
                 }
 
                 let imageUrl = uploadResult.imageUrl; // Get uploaded image URL
-
+console.log(imageUrl);
                 // Now send the full request data with the image URL
                 let requestBody = {
                     equipment_id,
@@ -150,13 +151,14 @@
                     priority,
                     picture: imageUrl
                 };
+                console.log(requestBody);
 
                 let response = await fetch("/requests", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(requestBody)
                 });
-
+             console.log(response);
                 let result = await response.json();
                 loading.style.display = "none";
 

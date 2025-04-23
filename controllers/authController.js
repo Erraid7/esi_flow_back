@@ -41,17 +41,18 @@ const registerUser = async (req, res) => {
 const loginPage = (req, res) => {
     res.send("Login Page");
 };
-
 const loginUser = async (req, res) => {
     const { email, phone, password } = req.body;
 
     if ((!email && !phone) || !password) {
-        return res.status(400).json({ message: "Email or phone and password are required" });
+        return res.status(401).json({ message: "Email or phone and password are required" });
     }
 
     try {
         const User = await user.findOne({ where: { [email ? 'email' : 'phone']: email || phone } });
-        if (!user) {
+        if (!User) {
+            console.log("User not found");
+            console.log(email);
             return res.status(400).json({ message: "Invalid email/phone or password" });
         }
 
@@ -60,7 +61,7 @@ const loginUser = async (req, res) => {
             return res.status(400).json({ message: "Invalid email/phone or password" });
         }
 
-        const token = jwt.sign({ id: User.id, role: User.role }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ id: User.id, role: User.role}, process.env.JWT_SECRET, {
             expiresIn: "2h",
         });
 
@@ -69,7 +70,15 @@ const loginUser = async (req, res) => {
             maxAge: 2 * 60 * 60 * 1000,
         });
 
-        res.status(200).json({ message: "Login successful", role: User.role });
+        // Remove password from user data before sending
+        const { password: _, ...userWithoutPassword } = User.get({ plain: true });
+
+        res.status(200).json({ 
+            message: "Login successful", 
+            user: userWithoutPassword,
+            role: User.role,
+            token: token
+        });
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
     }
@@ -100,8 +109,56 @@ const modifyPassword = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
+const editUser = async (req, res) => {
+    const id = req.params.id;
+    const { full_name, email, phone, bio, role, profession, password } = req.body;
 
+    if (!id) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
 
+    try {
+        const existingUser = await user.findOne({ where: { id } });
+        if (!existingUser) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        // Prepare update data with only provided fields
+        const updateData = {};
+        
+        if (full_name) updateData.full_name = full_name;
+        if (email) updateData.email = email;
+        if (phone) updateData.phone = phone;
+        if (bio) updateData.bio = bio;
+        if (role) updateData.role = role;
+        if (profession) updateData.profession = profession;
+        
+        // Handle password update separately with encryption
+        if (password) {
+            updateData.password = await bcrypt.hash(password, 10);
+        }
+
+        // Check if email is being changed and if it's already in use
+        if (email && email !== existingUser.email) {
+            const emailExists = await user.findOne({ where: { email } });
+            if (emailExists) {
+                return res.status(400).json({ message: "Email already in use" });
+            }
+        }
+
+        await existingUser.update(updateData);
+
+        // Don't send the password back in the response
+        const { password: _, ...userWithoutPassword } = existingUser.get({ plain: true });
+        
+        res.status(200).json({ 
+            message: "User updated successfully", 
+            user: userWithoutPassword 
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
 
 module.exports = {
     registerPage,
@@ -110,4 +167,5 @@ module.exports = {
     loginUser,
     logoutUser,
     modifyPassword,
+     editUser,
 };

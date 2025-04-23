@@ -4,6 +4,10 @@ const equipmentController = require("../controllers/authController");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { requireAuth, requireRole } = require("../middlewares/authmiddlware");
+const cors = require('cors');
+
+
+
 
 const SECRET_KEY = process.env.JWT_SECRET || "cook123";
 
@@ -21,6 +25,8 @@ router.post("/login", equipmentController.loginUser);
 
 // Logout Route (Clears the JWT Cookie)
 router.post("/logout", equipmentController.logoutUser);
+//add router for edit user
+router.put("/edit-user/:id", equipmentController.editUser);
 
 // Route for modify password
 router.put("/modify-password", equipmentController.modifyPassword);
