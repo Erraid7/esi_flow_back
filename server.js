@@ -5,6 +5,7 @@ const {checkUser,requireAuth,requireRole}= require('./middlewares/authmiddlware'
 const app = express();
 const path = require("path");
 const cors = require('cors');
+require("./cornjobs/autoMaintenanceJob"); // Import the cron job
 
 // Install cors if you haven't already: npm install cors
 app.use(cors({
@@ -25,7 +26,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(express.json());
 app.use(cookieParser());
-
+ 
 app.use(checkUser); 
 
 // Import and use routes

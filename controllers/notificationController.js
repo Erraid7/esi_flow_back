@@ -1,14 +1,5 @@
 const { notification } = require("../models");
 
-// Create a Notification
-exports.createNotification = async (req, res) => {
-  try {
-    const newNotification = await notification.create(req.body);
-    res.status(201).json(newNotification);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
 
 // Get All Notifications
 exports.getAllNotifications = async (req, res) => {
@@ -19,6 +10,7 @@ exports.getAllNotifications = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Get Notification by ID
 exports.getNotificationById = async (req, res) => {

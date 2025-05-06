@@ -6,8 +6,14 @@ module.exports = (sequelize, DataTypes) => {
     description: { type: DataTypes.TEXT },
     localisation: { type: DataTypes.STRING },
     equipment_id: { type: DataTypes.INTEGER },
+    request_code: { type: DataTypes.STRING, allowNull: true }, // Step 1: Add this field
     priority: { type: DataTypes.ENUM("low", "medium", "high"), allowNull: false },
-    req_status: { type: DataTypes.BOOLEAN, defaultValue: false },
+    req_status: { 
+      type: DataTypes.ENUM("reviewing", "accepted", "refused"), 
+      defaultValue: "reviewing",
+      allowNull: false
+    },
+    
     created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     updated_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     picture: { type: DataTypes.TEXT, allowNull: true },
@@ -17,6 +23,18 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
+    hooks: {
+      afterCreate: async (request) => {
+        const paddedId = String(request.id).padStart(5, "0");
+        const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+        const eqPart = request.equipment_id || "000";
+        const code = `REQ-${eqPart}-${datePart}-${paddedId}`;
+  
+        // Update the model instance
+        request.request_code = code;
+        await request.save();
+      }
+    }
   }
 
 );
@@ -29,3 +47,4 @@ module.exports = (sequelize, DataTypes) => {
 
   return Request;
 };
+

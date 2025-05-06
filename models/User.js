@@ -7,6 +7,17 @@ module.exports = (sequelize, DataTypes) => {
     password: { type: DataTypes.STRING, allowNull: false },
     phone: { type: DataTypes.STRING },
     bio: { type: DataTypes.TEXT },
+    pictures: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "https://res.cloudinary.com/di1wbg7qo/image/upload/v1746012223/uploads/Default_pfp.png" // change this to your real default image URL
+    },
+    wants_email_notifications: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true, // changed from false to true
+    },    
+    
     profession: { 
       type: DataTypes.ENUM(
         "teacher",   

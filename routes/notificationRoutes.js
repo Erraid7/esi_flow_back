@@ -3,7 +3,6 @@ const router = express.Router();
 const notificationController = require("../controllers/notificationController");
 
 // Notification-related routes
-router.post("/", notificationController.createNotification);
 router.get("/", notificationController.getAllNotifications);
 router.get("/:id", notificationController.getNotificationById);
 router.put("/:id", notificationController.updateNotification);

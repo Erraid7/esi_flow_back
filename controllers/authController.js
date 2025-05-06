@@ -1,42 +1,125 @@
 const { user } = require("../models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const { requireAuth, requireRole } = require("../middlewares/authmiddlware");
+const sendEmail = require("../utils/emailService"); // adjust path as needed
 
+const createNotification = require("../utils/notifcationservice"); // Adjust path if needed
 
 const registerPage = (req, res) => {
     res.send("Register Page");
 };
 
+//================================================================================================================
 const registerUser = async (req, res) => {
-    const {  full_name, email, password, phone, bio, role,profession } = req.body;
-
+    const {
+      full_name,
+      email,
+      password,
+      phone,
+      bio,
+      role,
+      profession,
+      sendEmailNotification,
+    } = req.body;
     if (!full_name || !email || !password || !phone || !bio || !role || !profession) {
-        return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ message: "All fields are required" });
     }
-
+  
     try {
-        const existingUser = await user.findOne({ where: { email } });
-        if (existingUser) {
-            return res.status(400).json({ message: "User already exists" });
-        }
+      const existingUser = await user.findOne({ 
+        where: { email },
+        attributes: ['id', 'email'] // Only fetch needed fields
+      });
+      
+      if (existingUser) {
+        return res.status(400).json({ message: "User already exists" });
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = await user.create({
+        full_name,
+        email,
+        password: hashedPassword,
+        phone,
+        bio,
+        role,
+        profession,
+      });
+      // Send response immediately
+      res.status(201).json({ 
+        message: "User created successfully", 
+        user: newUser 
+      });
+  
+      // Handle background tasks (email and notifications) after response
+      Promise.all([
+        // Task 1: Create welcome notification
+        createNotification({
+          recipientId: newUser.id,
+          message: `👋 Welcome to our platform, ${full_name}! We're excited to have you join us. Explore the features and let us know if you need any help.`,
+          type: "info",
+          isRead: false
+        }),
+        
+        // Task 2: Send email if needed
+        (async () => {
+          if (sendEmailNotification) {
+            const subject = "📧 Welcome to the Platform!";
+            const htmlContent = `
+  <div style="font-family: 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: auto; background: #ffffff; padding: 32px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #e5e7eb;">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <h2 style="color: #4f46e5; font-size: 24px; margin-bottom: 4px;">Bienvenue sur notre plateforme, ${full_name} !</h2>
+      <p style="color: #6b7280; font-size: 16px;">Votre compte a été créé avec succès.</p>
+    </div>
+  
+    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+  
+    <div style="font-size: 16px; color: #111827; line-height: 1.6;">
+      <p>Voici vos informations de connexion :</p>
+      <table style="width: 100%; border-collapse: collapse; margin-top: 16px;">
+        <tr>
+          <td style="font-weight: bold; padding: 8px; background: #f3f4f6;">📧 Adresse e-mail :</td>
+          <td style="padding: 8px; background: #f9fafb;">${email}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 8px; background: #f3f4f6;">🔐 Mot de passe :</td>
+          <td style="padding: 8px; background: #f9fafb;">${password}</td>
+        </tr>
+      </table>
+  
+      <p style="margin-top: 24px;">
+        Merci de vous connecter dès que possible et de modifier votre mot de passe pour garantir la sécurité de votre compte.
+      </p>
+  
+      <div style="text-align: center; margin-top: 32px;">
+        <a href="https://yourplatform.com/login" target="_blank" style="background: #4f46e5; color: white; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600;">
+          🔑 Se connecter
+        </a>
+      </div>
+    </div>
+  
+    <p style="font-size: 12px; color: #9ca3af; text-align: center; margin-top: 32px;">
+      Ceci est un message automatique. Merci de ne pas y répondre.
+    </p>
+  </div>`;
+  
+            return sendEmail(email, subject, htmlContent);
+          }
+        })()
+      ]).catch(error => {
+        console.error("Background task error:", error.message);
+        // Log error but don't affect user response since it's already sen
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await user.create({
-            full_name,
-            email,
-            password: hashedPassword,
-            phone,
-            bio,
-            role,
-            profession,
-        });
-
-        res.status(201).json({ message: "User created successfully", user: newUser });
+      });
+      
     } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+      console.error("Registration error:", error);
+      res.status(500).json({ message: "Server error", error: error.message });
     }
-};
+  };
+  
+  module.exports = registerUser;
+//================================================================================================================
 
 const loginPage = (req, res) => {
     res.send("Login Page");
@@ -66,7 +149,7 @@ const loginUser = async (req, res) => {
         });
 
         res.cookie("jwt", token, {
-            httpOnly: true,
+            httpOnly: false,
             maxAge: 2 * 60 * 60 * 1000,
         });
 
@@ -109,58 +192,104 @@ const modifyPassword = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
+
 const editUser = async (req, res) => {
-    const id = req.params.id;
-    const { full_name, email, phone, bio, role, profession, password } = req.body;
-
-    if (!id) {
-        return res.status(400).json({ message: "User ID is required" });
+  const id = req.params.id;
+  const { full_name, email, phone, bio, role, profession, password, sendWelcomeEmail } = req.body;
+  
+  if (!id) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+  
+  try {
+    // Check if any data is provided to update
+    const hasUpdates = full_name || email || phone || bio || role || profession || password;
+    if (!hasUpdates) {
+      return res.status(400).json({ message: "No update data provided" });
     }
 
-    try {
-        const existingUser = await user.findOne({ where: { id } });
-        if (!existingUser) {
-            return res.status(400).json({ message: "User not found" });
-        }
-
-        // Prepare update data with only provided fields
-        const updateData = {};
-        
-        if (full_name) updateData.full_name = full_name;
-        if (email) updateData.email = email;
-        if (phone) updateData.phone = phone;
-        if (bio) updateData.bio = bio;
-        if (role) updateData.role = role;
-        if (profession) updateData.profession = profession;
-        
-        // Handle password update separately with encryption
-        if (password) {
-            updateData.password = await bcrypt.hash(password, 10);
-        }
-
-        // Check if email is being changed and if it's already in use
-        if (email && email !== existingUser.email) {
-            const emailExists = await user.findOne({ where: { email } });
-            if (emailExists) {
-                return res.status(400).json({ message: "Email already in use" });
-            }
-        }
-
-        await existingUser.update(updateData);
-
-        // Don't send the password back in the response
-        const { password: _, ...userWithoutPassword } = existingUser.get({ plain: true });
-        
-        res.status(200).json({ 
-            message: "User updated successfully", 
-            user: userWithoutPassword 
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+    // Prepare update data with only provided fields
+    const updateData = {};
+    if (full_name) updateData.full_name = full_name;
+    if (phone) updateData.phone = phone;
+    if (bio) updateData.bio = bio;
+    if (role) updateData.role = role;
+    if (profession) updateData.profession = profession;
+    
+    // Find user and check email uniqueness in parallel if needed
+    const findUserPromise = user.findOne({ where: { id } });
+    let emailCheckPromise = Promise.resolve(null);
+    
+    if (email) {
+      emailCheckPromise = user.findOne({ where: { email, id: { [Op.ne]: id } } });
     }
+    
+    const [existingUser, emailExists] = await Promise.all([findUserPromise, emailCheckPromise]);
+    
+    if (!existingUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    // Check if email exists for another user
+    if (emailExists) {
+      return res.status(400).json({ message: "Email already in use" });
+    }
+    
+    if (email) updateData.email = email;
+    
+    // Handle password update separately with encryption
+    let clearPassword = null;
+    if (password) {
+      clearPassword = password;
+      // Use a lower salt rounds if performance is critical
+      updateData.password = await bcrypt.hash(password, 8); 
+    }
+    
+    // Update user data in database
+    await existingUser.update(updateData);
+    
+    // Track what changed for email notification
+    const isEmailChanged = email && email !== existingUser.email;
+    const isPasswordChanged = password !== undefined;
+    
+    // Only send email if needed and credentials changed
+    if (sendWelcomeEmail === true && (isEmailChanged || isPasswordChanged)) {
+      const recipientEmail = email || existingUser.email;
+      
+      // Build email content - only create if we're going to send
+      let emailContent = `
+        <h1>Account Information Update</h1>
+        <p>Hello ${full_name || existingUser.full_name},</p>
+        <p>Your account information has been updated. Here are the changes:</p>
+      `;
+      
+      if (isEmailChanged) emailContent += `<p><strong>New Email:</strong> ${email}</p>`;
+      if (isPasswordChanged) emailContent += `<p><strong>New Password:</strong> ${clearPassword}</p><p>Please change your password after login for security.</p>`;
+      emailContent += `<p>Best regards,<br>Support Team</p>`;
+      
+      // Send email in non-blocking way
+      sendEmail(
+        recipientEmail,
+        "Your Account Information Update",
+        emailContent
+      ).catch(err => console.error("Failed to send email:", err.message));
+    }
+    
+    // Return updated user data
+    const { password: _, ...userWithoutPassword } = existingUser.get({ plain: true });
+    
+    return res.status(200).json({ 
+      message: "User updated successfully", 
+      user: userWithoutPassword 
+    });
+    
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
 };
 
-module.exports = {
+module.exports = { 
     registerPage,
     registerUser,
     loginPage,
