@@ -51,7 +51,7 @@ exports.getInterventionsByTechnicianId = async (req, res) => {
         }
       ]
     });
-    interventions.length ? res.json(interventions) : res.status(404).json({ message: "No interventions found for this technician" });
+    interventions.length ? res.json(interventions) : res.json({ message: "No interventions found for this technician" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
