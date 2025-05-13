@@ -26,7 +26,7 @@ exports.getAllInterventions = async (req, res) => {
 exports.getInterventionById = async (req, res) => {
   try {
     const interventionData = await intervention.findByPk(req.params.id);
-    interventionData ? res.json(interventionData) : res.status(404).json({ message: "Intervention not found" });
+    interventionData ? res.json(interventionData) : res.json({ message: "Intervention not found" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
