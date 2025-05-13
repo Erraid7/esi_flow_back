@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "jest --runInBand"
+    "start": "npx sequelize db:migrate && node server.js"
   },
   "keywords": [],
   "author": "",
