@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
     localisation: { type: DataTypes.STRING },
 
     eqp_status: {
-      type: DataTypes.ENUM("working", "needs_maintenance", "out_of_service"),
+      type: DataTypes.ENUM("Working", "Needs Maintenance", "Out of service"),
       allowNull: false
     },
 

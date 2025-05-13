@@ -7,10 +7,10 @@ module.exports = (sequelize, DataTypes) => {
     localisation: { type: DataTypes.STRING },
     equipment_id: { type: DataTypes.INTEGER },
     request_code: { type: DataTypes.STRING, allowNull: true }, // Step 1: Add this field
-    priority: { type: DataTypes.ENUM("low", "medium", "high"), allowNull: false },
+    priority: { type: DataTypes.ENUM("Low", "Medium", "High"), allowNull: false },
     req_status: { 
-      type: DataTypes.ENUM("reviewing", "accepted", "refused"), 
-      defaultValue: "reviewing",
+      type: DataTypes.ENUM("Reviewing", "Accepted", "Refused"), 
+      defaultValue: "Reviewing",
       allowNull: false
     },
     

@@ -9,7 +9,7 @@ module.exports = {
         onDelete: "CASCADE" 
       },
       message: { type: Sequelize.TEXT, allowNull: false },
-      type: { type: Sequelize.ENUM("info", "warning", "error", "success"), allowNull: false },
+      type: { type: Sequelize.ENUM("Info", "Warning", "Error", "Success"), allowNull: false },
       request_id: { 
         type: Sequelize.INTEGER, 
         references: { model: "requests", key: "id" }, 

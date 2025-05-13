@@ -4,16 +4,16 @@ module.exports = {
       id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
       full_name: { type: Sequelize.STRING, allowNull: false },
       email: { type: Sequelize.STRING, allowNull: false, unique: true },
-      role: { type: Sequelize.ENUM("admin", "technician", "personal"), allowNull: false },
+      role: { type: Sequelize.ENUM("Admin", "Technician", "Personal"), allowNull: false },
       password: { type: Sequelize.STRING, allowNull: false },
       phone: { type: Sequelize.STRING },
       bio: { type: Sequelize.TEXT },
       profession: { type: Sequelize.ENUM(
-        "teacher",   
-        "security", 
-        "cleaning", 
-        "student", 
-        "researcher",
+        "Teacher",   
+        "Security", 
+        "Cleaning", 
+        "Student", 
+        "Researcher",
         "IT Technician",         // General IT support, software/hardware maintenance
         "Network Technician",    // Manages routers, switches, and networking issues
         "Server Administrator",  // Responsible for servers, data centers
@@ -29,7 +29,7 @@ module.exports = {
         "Gardener",              // Maintains gardens, lawns, and outdoor areas
         "Driver",                // Transports people, goods, or equipment
         "Office Equipment Technician", // Maintains printers, scanners, photocopiers 
-        "other"
+        "Other"
       ), allowNull: false },
       created_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
       updated_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW }

@@ -7,14 +7,14 @@ module.exports = {
 
     // 2. Create the new ENUM type
     await queryInterface.sequelize.query(`
-      CREATE TYPE enum_requests_req_status AS ENUM ('reviewing', 'accepted', 'refused')
+      CREATE TYPE enum_requests_req_status AS ENUM ('Reviewing', 'Accepted', 'Refused')
     `);
 
     // 3. Add the new column with ENUM
     await queryInterface.addColumn('requests', 'req_status', {
       type: 'enum_requests_req_status',
       allowNull: false,
-      defaultValue: 'reviewing',
+      defaultValue: 'Reviewing',
     });
   },
 

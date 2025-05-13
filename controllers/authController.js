@@ -2,6 +2,7 @@ const { user } = require("../models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const sendEmail = require("../utils/emailService"); // adjust path as needed
+const { Op } = require("sequelize"); // Import Op for advanced queries
 
 const createNotification = require("../utils/notifcationservice"); // Adjust path if needed
 
@@ -56,8 +57,8 @@ const registerUser = async (req, res) => {
         // Task 1: Create welcome notification
         createNotification({
           recipientId: newUser.id,
-          message: `👋 Welcome to our platform, ${full_name}! We're excited to have you join us. Explore the features and let us know if you need any help.`,
-          type: "info",
+          message: `👋 Welcome to our platform, ${full_name}! We''re excited to have you join us. Explore the features and let us know if you need any help.`,
+          type: "Info",
           isRead: false
         }),
         
@@ -78,8 +79,8 @@ const registerUser = async (req, res) => {
       <p>Voici vos informations de connexion :</p>
       <table style="width: 100%; border-collapse: collapse; margin-top: 16px;">
         <tr>
-          <td style="font-weight: bold; padding: 8px; background: #f3f4f6;">📧 Adresse e-mail :</td>
-          <td style="padding: 8px; background: #f9fafb;">${email}</td>
+          <td style="font-size: 16px; font-weight: bold; padding: 8px; background: #f3f4f6;">📧 Adresse e-mail :</td>
+          <td style="font-size: 16px; padding: 8px; background: #f9fafb;">${email}</td>
         </tr>
         <tr>
           <td style="font-weight: bold; padding: 8px; background: #f3f4f6;">🔐 Mot de passe :</td>
@@ -194,8 +195,9 @@ const modifyPassword = async (req, res) => {
 };
 
 const editUser = async (req, res) => {
-  const id = req.params.id;
-  const { full_name, email, phone, bio, role, profession, password, sendWelcomeEmail } = req.body;
+  // Try to get id from params, body, or query (adjust as needed)
+  const id = req.params.id
+  const { full_name, email, phone, bio, role, profession, password, sendWelcomeEmail, pictures } = req.body;
   
   if (!id) {
     return res.status(400).json({ message: "User ID is required" });
@@ -203,7 +205,7 @@ const editUser = async (req, res) => {
   
   try {
     // Check if any data is provided to update
-    const hasUpdates = full_name || email || phone || bio || role || profession || password;
+    const hasUpdates = full_name || email || phone || bio || role || profession || password || pictures;
     if (!hasUpdates) {
       return res.status(400).json({ message: "No update data provided" });
     }
@@ -215,6 +217,7 @@ const editUser = async (req, res) => {
     if (bio) updateData.bio = bio;
     if (role) updateData.role = role;
     if (profession) updateData.profession = profession;
+    if (pictures) updateData.pictures = pictures;
     
     // Find user and check email uniqueness in parallel if needed
     const findUserPromise = user.findOne({ where: { id } });
@@ -289,6 +292,151 @@ const editUser = async (req, res) => {
   }
 };
 
+// In-memory store for reset tokens (in production, use a database or Redis)
+const resetTokens = new Map()
+
+const generateVerificationCode = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString()
+}
+
+// 1. Forgot Password
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" })
+    }
+
+    const userRecord = await user.findOne({ where: { email } })
+    if (!userRecord) {
+      return res.json({ success: false, message: "No account found with this email" })
+    }
+
+    const verificationCode = generateVerificationCode()
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000) // 30 minutes from now
+    resetTokens.set(email, { code: verificationCode, expiresAt })
+
+    const htmlContent = `
+      <h2>Password Reset Request</h2>
+      <p>Hello ${userRecord.full_name},</p>
+      <p>Use this code to reset your password:</p>
+      <h3>${verificationCode}</h3>
+      <p>This code will expire in 30 minutes.</p>
+    `
+
+    await sendEmail(email, "Password Reset Verification Code", htmlContent)
+
+    await createNotification({
+      recipientId: userRecord.id,
+      message: "A password reset was requested for your account.",
+      type: "Info",
+      method: "app_notification",
+    })
+
+    res.status(200).json({ success: true, email, message: "Verification code sent to your email" })
+  } catch (error) {
+    console.error("forgotPassword:", error)
+    res.status(500).json({ success: false, message: "Internal server error" })
+  }
+}
+
+// 2. Verify Reset Code
+const verifyResetCode = async (req, res) => {
+  try {
+    const { email, code } = req.body
+    if (!email || !code) {
+      return res.status(400).json({ success: false, message: "Email and code are required" })
+    }
+
+    const token = resetTokens.get(email)
+    if (!token || new Date() > token.expiresAt) {
+      resetTokens.delete(email)
+      return res.status(400).json({ success: false, message: "Code expired or not found" })
+    }
+
+    if (token.code !== code) {
+      return res.status(400).json({ success: false, message: "Invalid code" })
+    }
+
+    res.status(200).json({ success: true, message: "Code is valid" })
+  } catch (error) {
+    console.error("verifyResetCode:", error)
+    res.status(500).json({ success: false, email, message: "Internal server error" })
+  }
+}
+
+// 3. Resend Code
+const resendResetCode = async (req, res) => {
+  try {
+    const { email } = req.body
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" })
+    }
+
+    const userRecord = await user.findOne({ where: { email } })
+    if (!userRecord) {
+      return res.status(404).json({ success: false, message: "No account found with this email" })
+    }
+
+    const verificationCode = generateVerificationCode()
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000)
+    resetTokens.set(email, { code: verificationCode, expiresAt })
+
+    const htmlContent = `
+      <h2>New Password Reset Code</h2>
+      <p>Hello ${userRecord.full_name},</p>
+      <p>Here is your new reset code:</p>
+      <h3>${verificationCode}</h3>
+      <p>This code expires in 30 minutes.</p>
+    `
+
+    await sendEmail(email, "New Verification Code", htmlContent)
+
+    res.status(200).json({ success: true, message: "New code sent to your email" })
+  } catch (error) {
+    console.error("resendResetCode:", error)
+    res.status(500).json({ success: false,email, message: "Internal server error" })
+  }
+}
+
+// 4. Reset Password
+const resetPassword = async (req, res) => {
+  try {
+    const { email, password } = req.body
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: "Email and password are required" })
+    }
+
+    const token = resetTokens.get(email)
+    if (!token || new Date() > token.expiresAt) {
+      resetTokens.delete(email)
+      return res.status(400).json({ success: false, message: "Code expired or session invalid" })
+    }
+
+    const userRecord = await user.findOne({ where: { email } })
+    if (!userRecord) {
+      return res.status(404).json({ success: false, message: "User not found" })
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+    await userRecord.update({ password: hashedPassword })
+    resetTokens.delete(email)
+
+    await createNotification({
+      recipientId: userRecord.id,
+      message: "Your password was reset successfully.",
+      type: "Info",
+      method: "app_notification",
+    })
+
+    res.status(200).json({ success: true, message: "Password reset successfully" })
+  } catch (error) {
+    console.error("resetPassword:", error)
+    res.status(500).json({ success: false,email, message: "Internal server error" })
+  }
+}
+
+
 module.exports = { 
     registerPage,
     registerUser,
@@ -296,5 +444,9 @@ module.exports = {
     loginUser,
     logoutUser,
     modifyPassword,
-     editUser,
+    editUser,
+    forgotPassword,
+    verifyResetCode,
+    resendResetCode,
+    resetPassword
 };

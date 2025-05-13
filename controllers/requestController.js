@@ -27,7 +27,7 @@ exports.createRequest = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    if (!["low", "medium", "high"].includes(priority)) {
+    if (!["Low", "Medium", "High"].includes(priority)) {
       return res.status(400).json({ message: "Invalid priority value" });
     }
 
@@ -46,20 +46,97 @@ exports.createRequest = async (req, res) => {
     res.status(201).json(newRequest);
 
     // Prepare email content
-    const subject = `📬 New Intervention Request Submitted: ${title}`;
+    const subject = `🔔 Intervention Request: ${title} [${priority.toUpperCase()}]`;
     const htmlContent = `
-      <div style="font-family: Arial, sans-serif; padding: 24px; background-color: #f9fafb; border-radius: 12px;">
-        <h2 style="color: #4f46e5;">New Request Submitted</h2>
-        <p><strong>Title:</strong> ${title}</p>
-        <p><strong>Description:</strong> ${description}</p>
-        <p><strong>Location:</strong> ${localisation}</p>
-        <p><strong>Priority:</strong> ${priority}</p>
-        <p><strong>Equipment ID:</strong> ${equipment_id}</p>
-        <p><a href="${picture}" style="color: #2563eb;">📷 View Attached Picture</a></p>
-        <br/>
-        <p style="font-size: 12px; color: #6b7280;">This is an automatic notification. Please do not reply.</p>
-      </div>
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>New Intervention Request</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; background-color: #f5f5f5;">
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto;">
+        <tr>
+          <td style="padding: 20px 0; text-align: center; background-color: #4f46e5;">
+            <h1 style="margin: 0; color: white; font-size: 24px;">New Intervention Request</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 30px; background-color: white; border-radius: 0 0 8px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+              <tr>
+                <td>
+                  <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                    <span style="font-weight: bold; color: #666; display: inline-block; width: 100px;">Title:</span>
+                    <span style="font-weight: 500;">${title}</span>
+                  </div>
+                  
+                  <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                    <span style="font-weight: bold; color: #666; display: inline-block; width: 100px;">Priority:</span>
+                    <span style="font-weight: 600; padding: 3px 10px; border-radius: 12px; font-size: 14px; display: inline-block; background-color: ${getPriorityColor(priority)}; color: white;">${priority.toUpperCase()}</span>
+                  </div>
+                  
+                  <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                    <span style="font-weight: bold; color: #666; display: inline-block; width: 100px;">Equipment:</span>
+                    <span style="font-weight: 500;">${equipment_id}</span>
+                  </div>
+                  
+                  <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                    <span style="font-weight: bold; color: #666; display: inline-block; width: 100px;">Location:</span>
+                    <span style="font-weight: 500;">${localisation}</span>
+                  </div>
+                  
+                  <div style="padding: 10px 0 20px 0; border-bottom: 1px solid #eee;">
+                    <div style="font-weight: bold; color: #666; margin-bottom: 8px;">Description:</div>
+                    <div style="line-height: 1.5; background-color: #f9fafb; padding: 12px; border-radius: 6px; border-left: 4px solid #4f46e5;">
+                      ${description}
+                    </div>
+                  </div>
+                  
+                  ${picture ? `
+                  <div style="padding: 20px 0;">
+                    <a href="${picture}" style="display: inline-block; background-color: #4f46e5; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 500;">
+                      📷 View Attached Image
+                    </a>
+                  </div>` : ''}
+                  
+                  <div style="padding: 20px 0 10px 0; text-align: center;">
+                    <a href="#respond" style="display: inline-block; background-color: #4f46e5; color: white; text-decoration: none; padding: 12px 28px; border-radius: 6px; font-weight: 500; margin-right: 10px;">
+                      Respond
+                    </a>
+                    <a href="#assign" style="display: inline-block; background-color: white; color: #4f46e5; border: 1px solid #4f46e5; text-decoration: none; padding: 12px 28px; border-radius: 6px; font-weight: 500;">
+                      Assign
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 20px; text-align: center; font-size: 12px; color: #6b7280;">
+            <p>This is an automatic notification. Please do not reply to this email.</p>
+            <p>© 2025 Your Company. All rights reserved.</p>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
     `;
+
+    // Helper function to set color based on priority
+    function getPriorityColor(priority) {
+      const priorityLower = priority.toLowerCase();
+      
+      if (priorityLower === 'high' || priorityLower === 'urgent') {
+        return '#dc2626'; // red
+      } else if (priorityLower === 'medium') {
+        return '#f59e0b'; // amber
+      } else {
+        return '#10b981'; // green
+      }
+    }
 
     // Perform background tasks asynchronously without awaiting
     Promise.all([
@@ -68,7 +145,7 @@ exports.createRequest = async (req, res) => {
         // Only query for admin IDs, not entire user objects
         const admins = await user.findAll({
           attributes: ['id', 'email'],
-          where: { role: "admin" }
+          where: { role: "Admin" }
         });
         
         // Create separate arrays for notification and email promises
@@ -76,7 +153,7 @@ exports.createRequest = async (req, res) => {
           createNotification({
             recipientId: admin.id,
             message: `📬 A new intervention request titled "${title}" was submitted.`,
-            type: "info",
+            type: "Info",
             requestId: newRequest.id,
           })
         );
@@ -138,16 +215,100 @@ exports.getRequestById = async (req, res) => {
   }
 };
 
+// Get Requests by User ID
+exports.getRequestsByUserId = async (req, res) => {
+  try {
+    const requests = await request.findAll({
+      where: { requester_id: req.params.userId },
+      include: [
+        {
+          model: user,
+          as: "requester",
+          attributes: ["id", "full_name", "email", "role"],
+        },
+        {
+          model: equipment,
+          as: "equipment",
+          attributes: ["id", "type", "category", "localisation"],
+        },
+      ],
+    });
+
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
 // Update Request
 exports.updateRequest = async (req, res) => {
   try {
-    const updated = await request.update(req.body, {
-      where: { id: req.params.id },
+    const { id } = req.params;
+    const updateData = req.body;
+    
+    // Find the request before updating to check status change
+    const requestData = await request.findByPk(id, {
+      include: [
+        {
+          model: user,
+          as: "requester",
+          attributes: ['id', 'email', 'full_name']
+        }
+      ]
     });
-    updated[0]
-      ? res.json({ message: "Request updated" })
-      : res.status(404).json({ message: "Request not found" });
+    
+    if (!requestData) {
+      return res.status(404).json({ message: "Request not found" });
+    }
+    
+    // Check if status is being changed to "Refused"
+    const isRefused = updateData.req_status === "Refused" && requestData.req_status !== "Refused";
+    
+    // Update the request
+    const updated = await request.update(updateData, {
+      where: { id }
+    });
+    
+    if (!updated[0]) {
+      return res.status(404).json({ message: "Request not found or no changes applied" });
+    }
+    
+    // Send response immediately
+    res.json({ message: "Request updated successfully" });
+    
+    // Handle email notification if request was refused
+    if (isRefused && requestData.requester?.email) {
+      try {
+        await Promise.all([
+          // Send email notification
+          sendEmail(
+            requestData.requester.email,
+            "Your Maintenance Request Has Been Refused",
+            `
+            <h2>Hello ${requestData.requester.full_name},</h2>
+            <p>We regret to inform you that your maintenance request titled <strong>"${requestData.title}"</strong> has been reviewed and declined by our team.</p>
+            ${updateData.refusal_reason ? `<p><strong>Reason:</strong> ${updateData.refusal_reason}</p>` : ''}
+            <p>If you have any questions or wish to submit a new request with additional information, please don't hesitate to contact us.</p>
+            <br/>
+            <p>Thank you for your understanding.</p>
+            <p>— Maintenance Team</p>
+            `
+          ),
+          
+          // Create notification for requester
+          createNotification({
+            recipientId: requestData.requester.id,
+            message: `❌ Your maintenance request "${requestData.title}" has been refused.`,
+            type: "Warning",
+            requestId: requestData.id,
+          })
+        ]);
+      } catch (emailError) {
+        console.error("Error sending refusal notification:", emailError.message);
+      }
+    }
   } catch (error) {
+    console.error("Error updating request:", error.message);
     res.status(500).json({ error: error.message });
   }
 };

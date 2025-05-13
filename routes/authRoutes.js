@@ -1,56 +1,38 @@
 const express = require("express");
 const router = express.Router();
-const equipmentController = require("../controllers/authController");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const authController = require("../controllers/authController");
+
 const { requireAuth, requireRole } = require("../middlewares/authmiddlware");
-const cors = require('cors');
-
-
-
 
 const SECRET_KEY = process.env.JWT_SECRET || "cook123";
 
-// Register Route (For All Users)
-router.get("/register", equipmentController.registerPage);
+
 
 // Admin-Only: Create User (Technician/Simple User)
-router.post("/register", equipmentController.registerUser);
-
-// Login Route (For All Users)
-router.get("/login", equipmentController.loginPage);
+router.post("/register", authController.registerUser);
 
 // Login Route
-router.post("/login", equipmentController.loginUser);
+router.post("/login", authController.loginUser);
 
 // Logout Route (Clears the JWT Cookie)
-router.post("/logout", equipmentController.logoutUser);
+router.post("/logout", authController.logoutUser);
 //add router for edit user
-router.put("/edit-user/:id", equipmentController.editUser);
+router.put("/edit-user/:id", authController.editUser);
 
 // Route for modify password
-router.put("/modify-password", equipmentController.modifyPassword);
+router.put("/modify-password", authController.modifyPassword);
 
-// 🔹 Protected Route Example (Only Authenticated Users Can Access)
-router.get("/protected",requireAuth, requireRole(["admin"]), (req, res) => {
-    res.json({ message: "Welcome! You have access.", user: req.user });
-  });
-  
-  
-  // Admin-Only Route Example
-  router.get("/admin",requireAuth, requireRole(["admin"]),(req, res) => {
-    res.send("Admin Page");
-  });
-  //add  a route for technician
-  router.get("/technician",requireAuth, requireRole(["technician"]),(req, res) => {
-    res.send("Technician Page");
-  });
-  
-  
-  //add a route for user
-  router.get("/user",requireAuth, requireRole(["user"]),(req, res) => {
-    res.send("User Page");
-  });
+// Admin-Only Route Example
+router.get("/admin", requireAuth, requireRole(["admin"]), (req, res) => {
+  res.send("Admin Page");
+});
 
 
-module.exports = router
+router.post("/forgot-password", authController.forgotPassword)
+router.post("/verify-reset-code", authController.verifyResetCode)
+router.post("/resend-reset-code", authController.resendResetCode)
+router.post("/reset-password", authController.resetPassword)
+
+
+
+module.exports = router;

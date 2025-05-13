@@ -6,6 +6,7 @@ const upload = require("../middlewares/upload");
 router.post("/", interventionController.createIntervention);
 router.get("/", interventionController.getAllInterventions);
 router.get("/:id", interventionController.getInterventionById);
+router.get("/technician/:technicianId", interventionController.getInterventionsByTechnicianId); // New route to get interventions by technician ID
 router.put("/:id", interventionController.updateIntervention);
 router.delete("/:id", interventionController.deleteIntervention);
 router.post("/from-request/:requestId", upload.single("image"), interventionController.createInterventionFromRequest); // New route to create intervention from request

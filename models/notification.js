@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     recipient_id: { type: DataTypes.INTEGER, allowNull: false },
     message: { type: DataTypes.TEXT, allowNull: false },
-    type: { type: DataTypes.ENUM("info", "warning", "error", "success"), allowNull: false },
+    type: { type: DataTypes.ENUM("Info", "Warning", "Error", "Success"), allowNull: false },
     request_id: { type: DataTypes.INTEGER },
     intervention_id: { type: DataTypes.INTEGER },
     delivery_method: { type: DataTypes.ENUM("email", "sms", "app_notification"), allowNull: false },

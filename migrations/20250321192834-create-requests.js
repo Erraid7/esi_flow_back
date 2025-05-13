@@ -16,7 +16,7 @@ module.exports = {
         references: { model: "equipments", key: "id" }, 
         onDelete: "SET NULL" 
       },
-      priority: { type: Sequelize.ENUM("low", "medium", "high"), allowNull: false },
+      priority: { type: Sequelize.ENUM("Low", "Medium", "High"), allowNull: false },
       picture: { type: Sequelize.TEXT, allowNull: true },
       req_status: { type: Sequelize.BOOLEAN, defaultValue: false },
       created_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },

@@ -9,7 +9,7 @@ module.exports = {
         references: { model: "users", key: "id" }, 
         onDelete: "CASCADE" 
       },
-      intv_status: { type: Sequelize.ENUM("To Do", "In Progress", "Pendding", "completed", "cancelled"), allowNull: false },
+      intv_status: { type: Sequelize.ENUM("To Do", "In Progress", "Pending", "Completed", "Cancelled"), allowNull: false },
       deadline: { type: Sequelize.DATE },
       date_creation: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
       date_cloture: { type: Sequelize.DATE },
@@ -20,7 +20,7 @@ module.exports = {
         references: { model: "requests", key: "id" }, 
         onDelete: "CASCADE" 
       },
-      intervention_type: { type: Sequelize.ENUM("repair", "maintenance", "replacement"), allowNull: false }
+      intervention_type: { type: Sequelize.ENUM("Repair", "Maintenance", "Replacement"), allowNull: false }
     });
   },
   down: async (queryInterface) => {

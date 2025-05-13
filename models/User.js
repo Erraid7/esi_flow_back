@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     full_name: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: false, unique: true },
-    role: { type: DataTypes.ENUM("admin", "technician", "personal"), allowNull: false },
+    role: { type: DataTypes.ENUM("Admin", "Technician", "Personal"), allowNull: false },
     password: { type: DataTypes.STRING, allowNull: false },
     phone: { type: DataTypes.STRING },
     bio: { type: DataTypes.TEXT },
@@ -20,11 +20,11 @@ module.exports = (sequelize, DataTypes) => {
     
     profession: { 
       type: DataTypes.ENUM(
-        "teacher",   
-        "security", 
-        "cleaning", 
-        "student", 
-        "researcher",
+        "Teacher",   
+        "Security", 
+        "Cleaning", 
+        "Student", 
+        "Researcher",
         "IT Technician",         // General IT support, software/hardware maintenance
         "Network Technician",    // Manages routers, switches, and networking issues
         "Server Administrator",  // Responsible for servers, data centers
@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
         "Gardener",              // Maintains gardens, lawns, and outdoor areas
         "Driver",                // Transports people, goods, or equipment
         "Office Equipment Technician", // Maintains printers, scanners, photocopiers 
-        "other"
+        "Other"
       ), 
       allowNull: false 
     }, // Adjust values based on school roles

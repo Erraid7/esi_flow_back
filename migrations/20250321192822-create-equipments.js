@@ -16,7 +16,7 @@ module.exports = {
       acquisition_date: { type: Sequelize.DATE },
       date_of_commissioning: { type: Sequelize.DATE },
       localisation: { type: Sequelize.STRING },
-      eqp_status: { type: Sequelize.ENUM("working", "needs_maintenance", "out_of_service"), allowNull: false },
+      eqp_status: { type: Sequelize.ENUM("Working", "Needs Maintenance", "Out of service"), allowNull: false },
       documentation: { type: Sequelize.TEXT },
       created_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
       updated_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW }

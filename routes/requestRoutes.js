@@ -8,6 +8,7 @@ const upload = require("../middlewares/upload");
 router.post("/", requestController.createRequest);
 router.get("/", requestController.getAllRequests);
 router.get("/:id", requestController.getRequestById);
+router.get("/user/:userId", requestController.getRequestsByUserId); // New route to get requests by user ID
 router.put("/:id", requestController.updateRequest);
 router.delete("/:id", requestController.deleteRequest);// Trigger periodic maintenance check
 router.post("/auto/periodic", requestController.handlePeriodicRequests);
