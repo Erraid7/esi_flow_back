@@ -5,6 +5,13 @@
     "database": "esi_flow_db",
     "host": "dpg-d0h8p3buibrs739gkl40-a",
     "dialect": "postgres"
+  },
+  "production": {
+    "username": "esi_flow_db_user",
+    "password": "QMZuZtdlbbf5FhP6vTNVG0zv11xusIdT",
+    "database": "esi_flow_db",
+    "host": "dpg-d0h8p3buibrs739gkl40-a",
+    "dialect": "postgres"
   }
 } 
 

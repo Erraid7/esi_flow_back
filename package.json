@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx sequelize db:migrate && node server.js"
+    "start": "npx sequelize-cli db:migrate --env production && node server.js"
   },
   "keywords": [],
   "author": "",
