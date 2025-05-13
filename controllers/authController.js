@@ -151,6 +151,7 @@ const loginUser = async (req, res) => {
         });
 
         res.cookie("jwt", token, {
+            domain: '',
             httpOnly: false,
             secure: true,
             sameSite: 'None',           // Explicitly allow cross-site
