@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "postgres",
-    "password": "221105",
+    "username": "esi_flow_db_user",
+    "password": "QMZuZtdlbbf5FhP6vTNVG0zv11xusIdT",
     "database": "esi_flow_db",
-    "host": "127.0.0.1",
+    "host": "dpg-d0h8p3buibrs739gkl40-a",
     "dialect": "postgres"
   }
 } 

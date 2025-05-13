@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: true, // changed from false to true
     },    
-    
+
     profession: { 
       type: DataTypes.ENUM(
         "Teacher",   
