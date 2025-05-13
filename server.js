@@ -9,7 +9,7 @@ require("./cornjobs/autoMaintenanceJob"); // Import the cron job
 
 // Install cors if you haven't already: npm install cors
 app.use(cors({
-  origin: 'https://esi-flow.vercel.app/', // Your frontend URL
+  origin: 'https://esi-flow.vercel.app', // Your frontend URL
   credentials: true // Important for cookies 
 }));
 
