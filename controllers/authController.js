@@ -152,6 +152,7 @@ const loginUser = async (req, res) => {
 
         res.cookie("jwt", token, {
             httpOnly: false,
+            secure: true,
             sameSite: 'None',           // Explicitly allow cross-site
             maxAge: 2 * 60 * 60 * 1000,
         });
