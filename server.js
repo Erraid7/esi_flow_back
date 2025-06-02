@@ -8,10 +8,23 @@ const cors = require('cors');
 require("./cornjobs/autoMaintenanceJob"); // Import the cron job
 
 // Install cors if you haven't already: npm install cors
+const allowedOrigins = [
+  'https://esi-flow.vercel.app',
+  'http://localhost:3000'
+];
+
 app.use(cors({
-  origin: 'https://esi-flow.vercel.app', // Your frontend URL
-  credentials: true // Important for cookies 
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, or Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true
 }));
+
 
 
 // Set EJS as the template engine
