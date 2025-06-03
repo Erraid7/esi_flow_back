@@ -375,11 +375,68 @@ const forgotPassword = async (req, res) => {
     resetTokens.set(email, { code: verificationCode, expiresAt })
 
     const htmlContent = `
-      <h2>Password Reset Request</h2>
-      <p>Hello ${userRecord.full_name},</p>
-      <p>Use this code to reset your password:</p>
-      <h3>${verificationCode}</h3>
-      <p>This code will expire in 30 minutes.</p>
+      <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Reset</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #4a5568; background-color: #f7fafc;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 500px; margin: 20px auto;">
+    <tr>
+      <td style="padding: 0;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 25px 20px; text-align: center; background-color: #0D57AB; border-radius: 12px 12px 0 0;">
+              <h1 style="margin: 0; color: white; font-size: 24px; font-weight: 600;">Password Reset</h1>
+            </td>
+          </tr>
+          
+          <!-- Content area -->
+          <tr>
+            <td style="padding: 30px; background-color: white; border-radius: 0 0 12px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <!-- Greeting -->
+                    <p style="margin: 0 0 20px 0; line-height: 1.5; color: #4a5568; font-size: 16px;">
+                      Hello Mr. ${userRecord.full_name},
+                    </p>
+                    
+                    <!-- Reset message -->
+                    <p style="margin: 0 0 15px 0; line-height: 1.5; color: #4a5568; font-size: 16px;">
+                      Use this code to reset your password:
+                    </p>
+                    
+                    <!-- Verification code -->
+                    <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0; border: 1px dashed #cbd5e0;">
+                      <h2 style="margin: 0; color: #0D57AB; font-size: 28px; font-family: monospace; letter-spacing: 2px;">${verificationCode}</h2>
+                    </div>
+                    
+                    <!-- Expiration notice -->
+                    <p style="margin: 20px 0 0 0; line-height: 1.5; color: #718096; font-size: 14px;">
+                      This code will expire in 30 minutes.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 20px; text-align: center; font-size: 12px; color: #a0aec0; background-color: #f8fafc; border-radius: 0 0 8px 8px;">
+              <p style="margin: 5px 0; line-height: 1.4;">If you didn't request this password reset, please ignore this email.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
     `
 
     await sendEmail(email, "Password Reset Verification Code", htmlContent)
@@ -441,11 +498,68 @@ const resendResetCode = async (req, res) => {
     resetTokens.set(email, { code: verificationCode, expiresAt })
 
     const htmlContent = `
-      <h2>New Password Reset Code</h2>
-      <p>Hello ${userRecord.full_name},</p>
-      <p>Here is your new reset code:</p>
-      <h3>${verificationCode}</h3>
-      <p>This code expires in 30 minutes.</p>
+      <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Reset</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #4a5568; background-color: #f7fafc;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 500px; margin: 20px auto;">
+    <tr>
+      <td style="padding: 0;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 25px 20px; text-align: center; background-color: #0D57AB; border-radius: 12px 12px 0 0;">
+              <h1 style="margin: 0; color: white; font-size: 24px; font-weight: 600;">Password Reset</h1>
+            </td>
+          </tr>
+          
+          <!-- Content area -->
+          <tr>
+            <td style="padding: 30px; background-color: white; border-radius: 0 0 12px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <!-- Greeting -->
+                    <p style="margin: 0 0 20px 0; line-height: 1.5; color: #4a5568; font-size: 16px;">
+                      Hello Mr. ${userRecord.full_name},
+                    </p>
+                    
+                    <!-- Reset message -->
+                    <p style="margin: 0 0 15px 0; line-height: 1.5; color: #4a5568; font-size: 16px;">
+                      Use this code to reset your password:
+                    </p>
+                    
+                    <!-- Verification code -->
+                    <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0; border: 1px dashed #cbd5e0;">
+                      <h2 style="margin: 0; color: #0D57AB; font-size: 28px; font-family: monospace; letter-spacing: 2px;">${verificationCode}</h2>
+                    </div>
+                    
+                    <!-- Expiration notice -->
+                    <p style="margin: 20px 0 0 0; line-height: 1.5; color: #718096; font-size: 14px;">
+                      This code will expire in 30 minutes.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 20px; text-align: center; font-size: 12px; color: #a0aec0; background-color: #f8fafc; border-radius: 0 0 8px 8px;">
+              <p style="margin: 5px 0; line-height: 1.4;">If you didn't request this password reset, please ignore this email.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
     `
 
     await sendEmail(email, "New Verification Code", htmlContent)
