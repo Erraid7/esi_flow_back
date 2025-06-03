@@ -471,13 +471,80 @@ exports.createInterventionFromRequest = async (req, res) => {
             ? sendEmail(
                 reqData.requester.email,
                 `Your Maintenance Request Has Been ${isNewRequest ? 'Created' : 'Accepted'}`,
-                `
-                <h2>Hello ${reqData.requester.full_name},</h2>
-                <p>We're glad to inform you that your maintenance request titled <strong>"${reqData.title}"</strong> has been ${isNewRequest ? 'created' : 'reviewed and accepted'} by our team.</p>
-                <p>An intervention has been created and assigned to a technician.</p>
-                <br/>
-                <p>Thank you for your collaboration.</p>
-                <p>— Maintenance Team</p>
+                  ` <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request Accepted</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #4a5568; background-color: #f7fafc;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 20px auto;">
+    <tr>
+      <td style="padding: 0;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 30px 20px; text-align: center; background-color: #0D57AB; border-radius: 12px 12px 0 0;">
+              <h1 style="margin: 0; color: white; font-size: 28px; text-shadow: 0 1px 2px rgba(0,0,0,0.1); font-weight: 600;">Request Accepted</h1>
+            </td>
+          </tr>
+          
+          <!-- Content area -->
+          <tr>
+            <td style="padding: 40px 30px; background-color: white; border-radius: 0 0 12px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <!-- Greeting -->
+                    <h2 style="margin: 0 0 20px 0; color: #2d3748; font-size: 22px; font-weight: 600;">Hello Mr. ${reqData.requester.full_name},</h2>
+                    
+                    <!-- Main message -->
+                    <p style="margin: 0 0 18px 0; line-height: 1.6; color: #4a5568; font-size: 16px;">
+                      We're pleased to inform you that your maintenance request titled <strong style="color: #2d3748;">"${reqData.title}"</strong> has been reviewed and accepted by our team.
+                    </p>
+                    
+                    <!-- Status update -->
+                    <div style="background-color: #f0f9ff; padding: 20px; border-radius: 8px; border-left: 4px solid #0D57AB; margin: 25px 0;">
+                      <p style="margin: 0; color: #0D57AB; font-weight: 500; font-size: 15px;">
+                        ✓ An intervention has been created and assigned to a technician.
+                      </p>
+                    </div>
+                    
+                    <!-- Closing -->
+                    <p style="margin: 25px 0 8px 0; line-height: 1.6; color: #4a5568; font-size: 16px;">
+                      Thank you for your collaboration.
+                    </p>
+                    
+                    <p style="margin: 0; color: #718096; font-size: 15px; font-weight: 500;">
+                      — Maintenance Team
+                    </p>
+                    
+                    <!-- Action button -->
+                    <div style="padding: 30px 0 10px 0; text-align: center;">
+                      <a href="https://esi-flow.vercel.app/" style="display: inline-block; background-color: #0D57AB; color: white; text-decoration: none; padding: 14px 35px; border-radius: 8px; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.08); font-size: 15px;">
+                        View Status
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 25px 20px; text-align: center; font-size: 12px; color: #a0aec0; background-color: #f8fafc; border-radius: 0 0 8px 8px;">
+              <p style="margin: 8px 0; line-height: 1.4;">This is an automatic notification. Please do not reply to this email.</p>
+              <p style="margin: 8px 0; line-height: 1.4;">© 2025 Your Company. All rights reserved.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
               `
               )
             : Promise.resolve(),
@@ -486,17 +553,102 @@ exports.createInterventionFromRequest = async (req, res) => {
           technician?.email
             ? sendEmail(
                 technician.email,
-                "New Task Assigned: Maintenance Intervention",
-                `
-                <h2>Hello ${technician.full_name},</h2>
-                <p>You have been assigned a new maintenance task from a user request.</p>
-                <p><strong>Task Title:</strong> ${reqData.title}</p>
-                <p><strong>Location:</strong> ${reqData.localisation}</p>
-                <p><strong>Deadline:</strong> ${deadline ? new Date(deadline).toLocaleDateString() : "Not specified"}</p>
-                <p><strong>Status:</strong> ${intv_status}</p>
-                <br/>
-                <p>Please log in to your dashboard to see more details.</p>
-                <p>— Maintenance Team</p>
+                  `New Task Assigned: Maintenance Intervention ${reqData.title}`,
+                  `
+              <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Task Assignment</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #4a5568; background-color: #f7fafc;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 20px auto;">
+    <tr>
+      <td style="padding: 0;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 30px 20px; text-align: center; background-color: #0D57AB; border-radius: 12px 12px 0 0;">
+              <h1 style="margin: 0; color: white; font-size: 28px; text-shadow: 0 1px 2px rgba(0,0,0,0.1); font-weight: 600;">New Task Assignment</h1>
+            </td>
+          </tr>
+          
+          <!-- Content area -->
+          <tr>
+            <td style="padding: 40px 30px; background-color: white; border-radius: 0 0 12px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <!-- Greeting -->
+                    <h2 style="margin: 0 0 20px 0; color: #2d3748; font-size: 22px; font-weight: 600;">Dear Mr. ${technician.full_name},</h2>
+                    
+                    <!-- Main message -->
+                    <p style="margin: 0 0 25px 0; line-height: 1.6; color: #4a5568; font-size: 16px;">
+                      You have been assigned a new maintenance task from a user request.
+                    </p>
+                    
+                    <!-- Task details -->
+                    <div style="background-color: #f8fafc; padding: 25px; border-radius: 10px; border-left: 4px solid #0D57AB; margin: 25px 0;">
+                      <!-- Task Title -->
+                      <div style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                        <span style="font-weight: 600; color: #718096; display: inline-block; width: 80px; font-size: 14px;">Task:</span>
+                        <span style="font-weight: 500; color: #2d3748; font-size: 15px;">${reqData.title}</span>
+                      </div>
+                      
+                      <!-- Location -->
+                      <div style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                        <span style="font-weight: 600; color: #718096; display: inline-block; width: 80px; font-size: 14px;">Location:</span>
+                        <span style="font-weight: 500; color: #2d3748; font-size: 15px;">${reqData.localisation}</span>
+                      </div>
+                      
+                      <!-- Deadline -->
+                      <div style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                        <span style="font-weight: 600; color: #718096; display: inline-block; width: 80px; font-size: 14px;">Deadline:</span>
+                        <span style="font-weight: 500; color: #2d3748; font-size: 15px;">${deadline ? new Date(deadline).toLocaleDateString() : "Not specified"}</span>
+                      </div>
+                      
+                      <!-- Status -->
+                      <div style="padding: 8px 0;">
+                        <span style="font-weight: 600; color: #718096; display: inline-block; width: 80px; font-size: 14px;">Status:</span>
+                        <span style="font-weight: 600; padding: 4px 12px; border-radius: 15px; font-size: 13px; display: inline-block; background-color: #dbeafe; color: #0D57AB; text-transform: uppercase; letter-spacing: 0.5px;">${intv_status}</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Instructions -->
+                    <p style="margin: 25px 0 8px 0; line-height: 1.6; color: #4a5568; font-size: 16px;">
+                      Please log in to your dashboard to see more details.
+                    </p>
+                    
+                    <p style="margin: 0; color: #718096; font-size: 15px; font-weight: 500;">
+                      — Maintenance Team
+                    </p>
+                    
+                    <!-- Action button -->
+                    <div style="padding: 30px 0 10px 0; text-align: center;">
+                      <a href="https://esi-flow.vercel.app/" style="display: inline-block; background-color: #0D57AB; color: white; text-decoration: none; padding: 14px 35px; border-radius: 8px; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.08); font-size: 15px;">
+                        Access Dashboard
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 25px 20px; text-align: center; font-size: 12px; color: #a0aec0; background-color: #f8fafc; border-radius: 0 0 8px 8px;">
+              <p style="margin: 8px 0; line-height: 1.4;">This is an automatic notification. Please do not reply to this email.</p>
+              <p style="margin: 8px 0; line-height: 1.4;">© 2025 Your Company. All rights reserved.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
               `
               )
             : Promise.resolve()
