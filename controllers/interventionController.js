@@ -220,14 +220,97 @@ exports.updateIntervention = async (req, res) => {
                 requester.email,
                 `Maintenance Request Status Update: ${intv_status}`,
                 `
-                <h2>Hello ${requester.full_name},</h2>
-                <p>${statusMessage}</p>
-                <p><strong>Request Title:</strong> ${interventionData.request.title}</p>
-                <p><strong>Current Status:</strong> ${intv_status}</p>
-                ${report ? `<p><strong>Technician Notes:</strong> ${report}</p>` : ''}
-                <br/>
-                <p>Thank you for your patience.</p>
-                <p>— Maintenance Team</p>
+                <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request Status Update</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #4a5568; background-color: #f7fafc;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 20px auto;">
+    <tr>
+      <td style="padding: 0;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 30px 20px; text-align: center; background-color: #0D57AB; border-radius: 12px 12px 0 0;">
+              <h1 style="margin: 0; color: white; font-size: 28px; text-shadow: 0 1px 2px rgba(0,0,0,0.1); font-weight: 600;">Request Status Update</h1>
+            </td>
+          </tr>
+          
+          <!-- Content area -->
+          <tr>
+            <td style="padding: 40px 30px; background-color: white; border-radius: 0 0 12px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <!-- Greeting -->
+                    <h2 style="margin: 0 0 20px 0; color: #2d3748; font-size: 22px; font-weight: 600;">Hello ${requester.full_name},</h2>
+                    
+                    <!-- Status message -->
+                    <p style="margin: 0 0 25px 0; line-height: 1.6; color: #4a5568; font-size: 16px;">
+                      ${statusMessage}
+                    </p>
+                    
+                    <!-- Request details -->
+                    <div style="background-color: #f8fafc; padding: 25px; border-radius: 10px; border-left: 4px solid #0D57AB; margin: 25px 0;">
+                      <!-- Request Title -->
+                      <div style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                        <span style="font-weight: 600; color: #718096; display: inline-block; width: 120px; font-size: 14px;">Request Title:</span>
+                        <span style="font-weight: 500; color: #2d3748; font-size: 15px;">${interventionData.request.title}</span>
+                      </div>
+                      
+                      <!-- Current Status -->
+                      <div style="padding: 8px 0; ${report ? 'border-bottom: 1px solid #e2e8f0;' : ''}">
+                        <span style="font-weight: 600; color: #718096; display: inline-block; width: 120px; font-size: 14px;">Current Status:</span>
+                        <span style="font-weight: 600; padding: 4px 12px; border-radius: 15px; font-size: 13px; display: inline-block; background-color: #dbeafe; color: #0D57AB; text-transform: uppercase; letter-spacing: 0.5px;">${intv_status}</span>
+                      </div>
+                      
+                      <!-- Technician Notes (conditional) -->
+                      ${report ? `
+                      <div style="padding: 8px 0;">
+                        <div style="font-weight: 600; color: #718096; margin-bottom: 8px; font-size: 14px;">Technician Notes:</div>
+                        <div style="background-color: white; padding: 12px; border-radius: 6px; color: #2d3748; font-size: 15px; line-height: 1.5; border: 1px solid #e2e8f0;">
+                          ${report}
+                        </div>
+                      </div>` : ''}
+                    </div>
+                    
+                    <!-- Closing -->
+                    <p style="margin: 25px 0 8px 0; line-height: 1.6; color: #4a5568; font-size: 16px;">
+                      Thank you for your patience.
+                    </p>
+                    
+                    <p style="margin: 0; color: #718096; font-size: 15px; font-weight: 500;">
+                      — Maintenance Team
+                    </p>
+                    
+                    <!-- Action button -->
+                    <div style="padding: 30px 0 10px 0; text-align: center;">
+                      <a href="https://esi-flow.vercel.app/" style="display: inline-block; background-color: #0D57AB; color: white; text-decoration: none; padding: 14px 35px; border-radius: 8px; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.08); font-size: 15px;">
+                        View Details
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 25px 20px; text-align: center; font-size: 12px; color: #a0aec0; background-color: #f8fafc; border-radius: 0 0 8px 8px;">
+              <p style="margin: 8px 0; line-height: 1.4;">This is an automatic notification. Please do not reply to this email.</p>
+              <p style="margin: 8px 0; line-height: 1.4;">© 2025 Your Company. All rights reserved.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
                 `
               )
             );
