@@ -65,44 +65,99 @@ const registerUser = async (req, res) => {
         // Task 2: Send email if needed
         (async () => {
           if (sendEmailNotification) {
-            const subject = "📧 Welcome to the Platform!";
-            const htmlContent = `
-  <div style="font-family: 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: auto; background: #ffffff; padding: 32px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #e5e7eb;">
-    <div style="text-align: center; margin-bottom: 24px;">
-      <h2 style="color: #4f46e5; font-size: 24px; margin-bottom: 4px;">Bienvenue sur notre plateforme, ${full_name} !</h2>
-      <p style="color: #6b7280; font-size: 16px;">Votre compte a été créé avec succès.</p>
-    </div>
-  
-    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
-  
-    <div style="font-size: 16px; color: #111827; line-height: 1.6;">
-      <p>Voici vos informations de connexion :</p>
-      <table style="width: 100%; border-collapse: collapse; margin-top: 16px;">
-        <tr>
-          <td style="font-size: 16px; font-weight: bold; padding: 8px; background: #f3f4f6;">📧 Adresse e-mail :</td>
-          <td style="font-size: 16px; padding: 8px; background: #f9fafb;">${email}</td>
-        </tr>
-        <tr>
-          <td style="font-weight: bold; padding: 8px; background: #f3f4f6;">🔐 Mot de passe :</td>
-          <td style="padding: 8px; background: #f9fafb;">${password}</td>
-        </tr>
-      </table>
-  
-      <p style="margin-top: 24px;">
-        Merci de vous connecter dès que possible et de modifier votre mot de passe pour garantir la sécurité de votre compte.
-      </p>
-  
-      <div style="text-align: center; margin-top: 32px;">
-        <a href="https://yourplatform.com/login" target="_blank" style="background: #4f46e5; color: white; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600;">
-          🔑 Se connecter
-        </a>
-      </div>
-    </div>
-  
-    <p style="font-size: 12px; color: #9ca3af; text-align: center; margin-top: 32px;">
-      Ceci est un message automatique. Merci de ne pas y répondre.
-    </p>
-  </div>`;
+            const subject = `📧 Welcome to the Platform! ${full_name}`;
+          const htmlContent = `
+ <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Our Platform</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #4a5568; background-color: #f7fafc;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 20px auto;">
+    <tr>
+      <td style="padding: 0;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 30px 20px; text-align: center; background-color: #0D57AB; border-radius: 12px 12px 0 0;">
+              <h1 style="margin: 0; color: white; font-size: 28px; text-shadow: 0 1px 2px rgba(0,0,0,0.1); font-weight: 600;">Welcome to Our Platform</h1>
+            </td>
+          </tr>
+          
+          <!-- Content area -->
+          <tr>
+            <td style="padding: 40px 30px; background-color: white; border-radius: 0 0 12px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <!-- Greeting -->
+                    <h2 style="margin: 0 0 20px 0; color: #2d3748; font-size: 22px; font-weight: 600;">Dear Mr. ${full_name},</h2>
+                    
+                    <!-- Welcome message -->
+                    <p style="margin: 0 0 25px 0; line-height: 1.6; color: #4a5568; font-size: 16px;">
+                      Welcome to our platform! Your account has been successfully created.
+                    </p>
+                    
+                    <!-- Login credentials -->
+                    <div style="background-color: #f8fafc; padding: 25px; border-radius: 10px; border-left: 4px solid #0D57AB; margin: 25px 0;">
+                      <p style="margin: 0 0 15px 0; color: #2d3748; font-weight: 600; font-size: 16px;">Your login credentials:</p>
+                      
+                      <!-- Email -->
+                      <div style="padding: 12px 0; border-bottom: 1px solid #e2e8f0;">
+                        <span style="font-weight: 600; color: #718096; display: inline-block; width: 120px; font-size: 14px;">Email Address:</span>
+                        <span style="font-weight: 500; color: #2d3748; font-size: 15px;">${email}</span>
+                      </div>
+                      
+                      <!-- Password -->
+                      <div style="padding: 12px 0;">
+                        <span style="font-weight: 600; color: #718096; display: inline-block; width: 120px; font-size: 14px;">Password:</span>
+                        <span style="font-weight: 500; color: #2d3748; font-size: 15px; font-family: monospace; background-color: #e2e8f0; padding: 2px 6px; border-radius: 4px;">${password}</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Security notice -->
+                    <div style="background-color: #fef3cd; padding: 20px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 25px 0;">
+                      <p style="margin: 0; color: #92400e; font-size: 15px; line-height: 1.5;">
+                        <strong>Security Notice:</strong> Please log in as soon as possible and change your password to ensure the security of your account.
+                      </p>
+                    </div>
+                    
+                    <!-- Closing -->
+                    <p style="margin: 25px 0 8px 0; line-height: 1.6; color: #4a5568; font-size: 16px;">
+                      Thank you for joining our platform.
+                    </p>
+                    
+                    <p style="margin: 0; color: #718096; font-size: 15px; font-weight: 500;">
+                      — Platform Team
+                    </p>
+                    
+                    <!-- Action button -->
+                    <div style="padding: 30px 0 10px 0; text-align: center;">
+                      <a href="https://esi-flow.vercel.app/" style="display: inline-block; background-color: #0D57AB; color: white; text-decoration: none; padding: 14px 35px; border-radius: 8px; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.08); font-size: 15px;">
+                        Login to Platform
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 25px 20px; text-align: center; font-size: 12px; color: #a0aec0; background-color: #f8fafc; border-radius: 0 0 8px 8px;">
+              <p style="margin: 8px 0; line-height: 1.4;">This is an automatic notification. Please do not reply to this email.</p>
+              <p style="margin: 8px 0; line-height: 1.4;">© 2025 Your Company. All rights reserved.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
   
             return sendEmail(email, subject, htmlContent);
           }
