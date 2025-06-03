@@ -48,82 +48,98 @@ exports.createRequest = async (req, res) => {
     // Prepare email content
     const subject = `🔔 Intervention Request: ${title} [${priority.toUpperCase()}]`;
     const htmlContent = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>New Intervention Request</title>
-    </head>
-    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; background-color: #f5f5f5;">
-      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto;">
-        <tr>
-          <td style="padding: 20px 0; text-align: center; background-color: #4f46e5;">
-            <h1 style="margin: 0; color: white; font-size: 24px;">New Intervention Request</h1>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 30px; background-color: white; border-radius: 0 0 8px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-              <tr>
-                <td>
-                  <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                    <span style="font-weight: bold; color: #666; display: inline-block; width: 100px;">Title:</span>
-                    <span style="font-weight: 500;">${title}</span>
-                  </div>
-                  
-                  <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                    <span style="font-weight: bold; color: #666; display: inline-block; width: 100px;">Priority:</span>
-                    <span style="font-weight: 600; padding: 3px 10px; border-radius: 12px; font-size: 14px; display: inline-block; background-color: ${getPriorityColor(priority)}; color: white;">${priority.toUpperCase()}</span>
-                  </div>
-                  
-                  <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                    <span style="font-weight: bold; color: #666; display: inline-block; width: 100px;">Equipment:</span>
-                    <span style="font-weight: 500;">${equipment_id}</span>
-                  </div>
-                  
-                  <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                    <span style="font-weight: bold; color: #666; display: inline-block; width: 100px;">Location:</span>
-                    <span style="font-weight: 500;">${localisation}</span>
-                  </div>
-                  
-                  <div style="padding: 10px 0 20px 0; border-bottom: 1px solid #eee;">
-                    <div style="font-weight: bold; color: #666; margin-bottom: 8px;">Description:</div>
-                    <div style="line-height: 1.5; background-color: #f9fafb; padding: 12px; border-radius: 6px; border-left: 4px solid #4f46e5;">
-                      ${description}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Intervention Request</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #4a5568; background-color: #f7fafc;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 20px auto;">
+    <tr>
+      <td style="padding: 0;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 30px 20px; text-align: center; background-color: #a1c4fd; border-radius: 12px 12px 0 0;">
+              <h1 style="margin: 0; color: white; font-size: 28px; text-shadow: 0 1px 2px rgba(0,0,0,0.1); font-weight: 600;"> New Intervention Request</h1>
+            </td>
+          </tr>
+          
+          <!-- Content area -->
+          <tr>
+            <td style="padding: 30px; background-color: white; border-radius: 0 0 12px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <!-- Title -->
+                    <div style="padding: 15px 0; border-bottom: 1px solid #f0f4f8;">
+                      <span style="font-weight: 600; color: #718096; display: inline-block; width: 100px; font-size: 14px;">📋 Title:</span>
+                      <span style="font-weight: 500; color: #2d3748; font-size: 16px;">${title}</span>
                     </div>
-                  </div>
-                  
-                  ${picture ? `
-                  <div style="padding: 20px 0;">
-                    <a href="${picture}" style="display: inline-block; background-color: #4f46e5; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 500;">
-                      📷 View Attached Image
-                    </a>
-                  </div>` : ''}
-                  
-                  <div style="padding: 20px 0 10px 0; text-align: center;">
-                    <a href="#respond" style="display: inline-block; background-color: #4f46e5; color: white; text-decoration: none; padding: 12px 28px; border-radius: 6px; font-weight: 500; margin-right: 10px;">
-                      Respond
-                    </a>
-                    <a href="#assign" style="display: inline-block; background-color: white; color: #4f46e5; border: 1px solid #4f46e5; text-decoration: none; padding: 12px 28px; border-radius: 6px; font-weight: 500;">
-                      Assign
-                    </a>
-                  </div>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 20px; text-align: center; font-size: 12px; color: #6b7280;">
-            <p>This is an automatic notification. Please do not reply to this email.</p>
-            <p>© 2025 Your Company. All rights reserved.</p>
-          </td>
-        </tr>
-      </table>
-    </body>
-    </html>
-    `;
+                    
+                    <!-- Priority -->
+                    <div style="padding: 15px 0; border-bottom: 1px solid #f0f4f8;">
+                      <span style="font-weight: 600; color: #718096; display: inline-block; width: 100px; font-size: 14px;">⚡ Priority:</span>
+                      <span style="font-weight: 600; padding: 6px 16px; border-radius: 20px; font-size: 13px; display: inline-block; background-color: #ffeaa7; color: #6c5ce7; text-transform: uppercase; letter-spacing: 0.5px;">${priority}</span>
+                    </div>
+                    
+                    <!-- Equipment -->
+                    <div style="padding: 15px 0; border-bottom: 1px solid #f0f4f8;">
+                      <span style="font-weight: 600; color: #718096; display: inline-block; width: 100px; font-size: 14px;">🔧 Equipment:</span>
+                      <span style="font-weight: 500; color: #2d3748; font-size: 16px;">${equipment_id}</span>
+                    </div>
+                    
+                    <!-- Location -->
+                    <div style="padding: 15px 0; border-bottom: 1px solid #f0f4f8;">
+                      <span style="font-weight: 600; color: #718096; display: inline-block; width: 100px; font-size: 14px;">📍 Location:</span>
+                      <span style="font-weight: 500; color: #2d3748; font-size: 16px;">${localisation}</span>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div style="padding: 15px 0 25px 0; border-bottom: 1px solid #f0f4f8;">
+                      <div style="font-weight: 600; color: #718096; margin-bottom: 12px; font-size: 14px;">📝 Description:</div>
+                      <div style="line-height: 1.6; background-color: #f8fafc; padding: 18px; border-radius: 10px; border-left: 4px solid #a1c4fd; color: #2d3748; font-size: 15px;">
+                        ${description}
+                      </div>
+                    </div>
+                    
+                    <!-- Image attachment (conditional) -->
+                    ${picture ? `
+                    <div style="padding: 25px 0; text-align: center;">
+                      <a href="${picture}" style="display: inline-block; background-color: #ddd6fe; color: #4a5568; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s ease; font-size: 15px;">
+                        📷 View Attached Image
+                      </a>
+                    </div>` : ''}
+                    
+                    <!-- Single action button -->
+                    <div style="padding: 25px 0 15px 0; text-align: center;">
+                      <a href="https://esi-flow.vercel.app/" style="display: inline-block; background-color: #a1c4fd; color: white; text-decoration: none; padding: 16px 40px; border-radius: 10px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s ease; font-size: 16px;">
+                        🌐 View on ESI Flow
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 25px 20px; text-align: center; font-size: 12px; color: #a0aec0; background-color: #f8fafc; border-radius: 0 0 8px 8px;">
+              <p style="margin: 8px 0; line-height: 1.4;">This is an automatic notification. Please do not reply to this email.</p>
+              <p style="margin: 8px 0; line-height: 1.4;">© 2025 Your Company. All rights reserved.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
+
 
     // Helper function to set color based on priority
     function getPriorityColor(priority) {
