@@ -9,7 +9,7 @@ module.exports = {
     dialect: 'postgres',
   },
   production: {
-    use_env_variable: 'postgresql://esi_flow_db_3ihs_user:0gC8NNeR9nQwXqygzzLOvkHMxMXOsKGv@dpg-d1o01f6r433s73be3en0-a.oregon-postgres.render.com/esi_flow_db_3ihs',
+    use_env_variable: 'DATABASE_URL',
     dialect: 'postgres',
     dialectOptions: {
       ssl: {
