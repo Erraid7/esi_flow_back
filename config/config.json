@@ -7,10 +7,10 @@
     "dialect": "postgres"
   },
   "production": {
-    "username": "esi_flow_db_user",
-    "password": "QMZuZtdlbbf5FhP6vTNVG0zv11xusIdT",
-    "database": "esi_flow_db",
-    "host": "dpg-d0h8p3buibrs739gkl40-a",
+    "username": "esi_flow_db_3ihs_user",
+    "password": "0gC8NNeR9nQwXqygzzLOvkHMxMXOsKGv",
+    "database": "esi_flow_db_3ihs",
+    "host": "dpg-d1o01f6r433s73be3en0-a",
     "dialect": "postgres"
   }
 } 
